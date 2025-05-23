@@ -1,3 +1,4 @@
+// data/api.js
 import { getAccessToken } from "../utils/auth";
 import CONFIG from "../config";
 
@@ -5,6 +6,47 @@ const ENDPOINTS = {
   // Auth
   REGISTER: `${CONFIG.BASE_URL}/register`,
   LOGIN: `${CONFIG.BASE_URL}/login`,
+  DIABETES_PREDICTION: `${CONFIG.DIABETES_PREDICTION}/predict`,
+  DIABETES_PREDICTION_GUEST: `${CONFIG.DIABETES_PREDICTION}/predicted/guest`,
+};
+
+export const predictDiabetesAsUser = async (file) => {
+  const token = getAccessToken();
+  if (!token) throw new Error("No access token available");
+
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const response = await fetch(ENDPOINTS.DIABETES_PREDICTION, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: formData,
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || "Authenticated prediction failed");
+  }
+
+  return await response.json();
+};
+
+export const predictDiabetes = async (file) => {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const response = await fetch(ENDPOINTS.DIABETES_PREDICTION_GUEST, {
+    method: "POST",
+    body: formData,
+  });
+
+  if (!response.ok) {
+    throw new Error("API request failed");
+  }
+
+  return await response.json();
 };
 
 export async function register({ name, email, password }) {

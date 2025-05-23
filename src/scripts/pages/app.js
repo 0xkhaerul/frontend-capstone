@@ -67,39 +67,32 @@ class App {
     const loginContainer = document.getElementById("login-container");
     const registerContainer = document.getElementById("register-container");
     const profileContainer = document.getElementById("profile-container");
+    const diabetesCheckedGuestContainer = document.getElementById(
+      "diabetes-checked-guest-container"
+    );
+    const diabetesCheckedUserContainer = document.getElementById(
+      "diabetes-checked-user-container"
+    );
 
     if (isLoggedIn) {
       // User is logged in - show profile
+
+      if (diabetesCheckedGuestContainer)
+        diabetesCheckedGuestContainer.style.display = "none";
+      if (diabetesCheckedUserContainer)
+        diabetesCheckedUserContainer.style.display = "block";
       if (loginContainer) loginContainer.style.display = "none";
       if (registerContainer) registerContainer.style.display = "none";
       if (profileContainer) profileContainer.style.display = "block";
     } else {
       // User is not logged in - show login and register
+      if (diabetesCheckedGuestContainer)
+        diabetesCheckedGuestContainer.style.display = "block";
+      if (diabetesCheckedUserContainer)
+        diabetesCheckedUserContainer.style.display = "none";
       if (loginContainer) loginContainer.style.display = "block";
       if (registerContainer) registerContainer.style.display = "block";
       if (profileContainer) profileContainer.style.display = "none";
-    }
-  }
-
-  _updateNavigation() {
-    const isLoggedIn = isAuthenticated();
-    const loginContainer = document.getElementById("login-container");
-    const registerContainer = document.getElementById("register-container");
-    const profileContainer = document.getElementById("profile-container");
-    const logoutContainer = document.getElementById("logout-container");
-
-    if (isLoggedIn) {
-      // User is logged in - show profile and logout
-      if (loginContainer) loginContainer.style.display = "none";
-      if (registerContainer) registerContainer.style.display = "none";
-      if (profileContainer) profileContainer.style.display = "block";
-      if (logoutContainer) logoutContainer.style.display = "block";
-    } else {
-      // User is not logged in - show login and register
-      if (loginContainer) loginContainer.style.display = "block";
-      if (registerContainer) registerContainer.style.display = "block";
-      if (profileContainer) profileContainer.style.display = "none";
-      if (logoutContainer) logoutContainer.style.display = "none";
     }
   }
 

@@ -4,16 +4,25 @@
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="view-transition" content="same-origin" />
-    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
-    <title>Creepy Story</title>
-    <link rel="manifest" href="/manifest.json" />
-    <meta name="theme-color" content="#000000" />
-    <!-- <link
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <link rel="stylesheet" href="styles/tailwind.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/assets/fontawesome/css/all.min.css" />
+    <title>Diabetes Checker</title>
+    <link
       href="https://fonts.googleapis.com/css2?family=Creepster&family=Bitter:wght@400;700&family=Special+Elite&display=swap"
       rel="stylesheet"
-    /> -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    />
     <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        background-color: #f3f4f6;
+        margin: 0;
+        padding: 0;
+      }
       .skip-to-content {
         position: absolute;
         top: -40px;
@@ -33,6 +42,25 @@
         outline: none;
         box-shadow: 0 0 10px rgba(168, 85, 247, 0.6);
       }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .animate-fadeInUp {
+        opacity: 0;
+        animation-name: fadeInUp;
+        animation-duration: 0.8s;
+        animation-fill-mode: forwards;
+        animation-timing-function: ease-out;
+      }
     </style>
   </head>
   <body>
@@ -42,178 +70,174 @@
     >
       Skip to content
     </a>
-
-    <header class="bg-white shadow-sm sticky top-0 z-40">
-      <div
-        class="container mx-auto px-4 py-3 flex justify-between items-center"
-      >
-        <a
-          class="text-2xl font-bold text-blue-600 hover:text-blue-800 transition-colors"
-          href="/"
+    <div style="display: flex; flex-direction: column; min-height: 100vh">
+      <header class="bg-white shadow-sm sticky top-0 z-40">
+        <div
+          class="container mx-auto px-4 py-3 flex justify-between items-center"
         >
-          Diabetes Checker
-        </a>
-
-        <nav class="hidden md:block">
-          <ul class="flex items-center space-x-6">
-            <li>
-              <a
-                href="#/diabetes-checked"
-                class="text-gray-800 hover:text-blue-600 font-medium transition-colors"
-              >
-                Check diabetes
-              </a>
-            </li>
-            <li>
-              <a
-                href="#/panduan-check"
-                class="text-gray-800 hover:text-blue-600 font-medium transition-colors"
-              >
-                Panduan Cek
-              </a>
-            </li>
-            <li>
-              <a
-                href="#/bacaan"
-                class="text-gray-800 hover:text-blue-600 font-medium transition-colors"
-              >
-                Bacaan
-              </a>
-            </li>
-
-            <!-- Auth Items -->
-            <li id="login-container" class="ml-4">
-              <a
-                href="#/login"
-                class="px-4 py-2 rounded-md font-medium text-blue-600 hover:bg-blue-50 transition-colors"
-              >
-                LOGIN
-              </a>
-            </li>
-            <li id="register-container">
-              <a
-                href="#/register"
-                class="px-4 py-2 rounded-md font-medium text-white bg-blue-600 hover:bg-blue-700 transition-colors"
-              >
-                REGISTER
-              </a>
-            </li>
-            <li id="profile-container" class="relative hidden ml-4">
-              <button id="profile-image" class="focus:outline-none">
-                <img
-                  src="./images/profile.jpg"
-                  alt="Profile"
-                  class="w-8 h-8 rounded-full object-cover border-2 border-blue-200 hover:border-blue-400 transition-colors"
-                />
-              </button>
-
-              <!-- Dropdown Menu -->
-              <div
-                id="profile-dropdown"
-                class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-100"
-              >
-                <a
-                  href="#/riwayat"
-                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
-                >
-                  Riwayat
-                </a>
-                <a
-                  href="#/profile"
-                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
-                >
-                  Profile
-                </a>
-                <a
-                  href="#"
-                  id="dropdown-logout"
-                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
-                >
-                  Logout
-                </a>
-              </div>
-            </li>
-          </ul>
-        </nav>
-
-        <!-- Mobile menu button -->
-        <button
-          id="mobile-menu-button"
-          class="md:hidden p-2 rounded-md text-gray-500 hover:text-gray-600 hover:bg-gray-100 focus:outline-none"
-        >
-          <svg
-            class="w-6 h-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
+          <a
+            class="text-2xl font-bold text-blue-600 hover:text-blue-800 transition-colors"
+            href="/"
           >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M4 6h16M4 12h16M4 18h16"
-            ></path>
-          </svg>
-        </button>
-      </div>
+            Diabetes Checker
+          </a>
+          <nav class="hidden md:block">
+            <ul class="flex items-center space-x-6">
+              <li>
+                <a
+                  href="#/diabetes-checked"
+                  class="text-gray-800 hover:text-blue-600 font-medium transition-colors"
+                >
+                  Check diabetes
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#/panduan-check"
+                  class="text-gray-800 hover:text-blue-600 font-medium transition-colors"
+                >
+                  Panduan Cek
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#/bacaan"
+                  class="text-gray-800 hover:text-blue-600 font-medium transition-colors"
+                >
+                  Bacaan
+                </a>
+              </li>
 
-      <!-- Mobile menu -->
-      <div
-        id="mobile-menu"
-        class="hidden md:hidden bg-white border-t border-gray-200"
-      >
-        <div class="container mx-auto px-4 py-3">
-          <ul class="space-y-2">
-            <li>
-              <a
-                href="#/diabetes-checked"
-                class="block px-3 py-2 rounded-md text-gray-800 hover:bg-blue-50 hover:text-blue-600 transition-colors"
-              >
-                Check diabetes
-              </a>
-            </li>
-            <li>
-              <a
-                href="#/panduan-check"
-                class="block px-3 py-2 rounded-md text-gray-800 hover:bg-blue-50 hover:text-blue-600 transition-colors"
-              >
-                Panduan Cek
-              </a>
-            </li>
-            <li>
-              <a
-                href="#/bacaan"
-                class="block px-3 py-2 rounded-md text-gray-800 hover:bg-blue-50 hover:text-blue-600 transition-colors"
-              >
-                Bacaan
-              </a>
-            </li>
-            <li id="mobile-login-container" class="pt-2">
-              <a
-                href="#/login"
-                class="block px-3 py-2 rounded-md text-blue-600 hover:bg-blue-50 transition-colors"
-              >
-                LOGIN
-              </a>
-            </li>
-            <li id="mobile-register-container">
-              <a
-                href="#/register"
-                class="block px-3 py-2 rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors text-center"
-              >
-                REGISTER
-              </a>
-            </li>
-          </ul>
+              <!-- Auth Items -->
+              <li id="login-container" class="ml-4">
+                <a
+                  href="#/login"
+                  class="px-4 py-2 rounded-md font-medium text-blue-600 hover:bg-blue-50 transition-colors"
+                >
+                  LOGIN
+                </a>
+              </li>
+              <li id="register-container">
+                <a
+                  href="#/register"
+                  class="px-4 py-2 rounded-md font-medium text-white bg-blue-600 hover:bg-blue-700 transition-colors"
+                >
+                  REGISTER
+                </a>
+              </li>
+              <li id="profile-container" class="relative hidden ml-4">
+                <button id="profile-image" class="focus:outline-none">
+                  <img
+                    src="./images/profile.jpg"
+                    alt="Profile"
+                    class="w-8 h-8 rounded-full object-cover border-2 border-blue-200 hover:border-blue-400 transition-colors"
+                  />
+                </button>
+
+                <!-- Dropdown Menu -->
+                <div
+                  id="profile-dropdown"
+                  class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-100"
+                >
+                  <a
+                    href="#/riwayat"
+                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                  >
+                    Riwayat
+                  </a>
+                  <a
+                    href="#/profile"
+                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                  >
+                    Profile
+                  </a>
+                  <a
+                    href="#"
+                    id="dropdown-logout"
+                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                  >
+                    Logout
+                  </a>
+                </div>
+              </li>
+            </ul>
+          </nav>
+
+          <!-- Mobile menu button -->
+          <button
+            id="mobile-menu-button"
+            class="md:hidden p-2 rounded-md text-gray-500 hover:text-gray-600 hover:bg-gray-100 focus:outline-none"
+          >
+            <svg
+              class="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16"
+              ></path>
+            </svg>
+          </button>
         </div>
-      </div>
-    </header>
 
-    <main
-      id="main-content"
-      class="container mx-auto px-4 py-6 focus:outline-none"
-      tabindex="-1"
-    ></main>
+        <!-- Mobile menu -->
+        <div
+          id="mobile-menu"
+          class="hidden md:hidden bg-white border-t border-gray-200"
+        >
+          <div class="container mx-auto px-4 py-3">
+            <ul class="space-y-2">
+              <li>
+                <a
+                  href="#/diabetes-checked"
+                  class="block px-3 py-2 rounded-md text-gray-800 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                >
+                  Check diabetes
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#/panduan-check"
+                  class="block px-3 py-2 rounded-md text-gray-800 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                >
+                  Panduan Cek
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#/bacaan"
+                  class="block px-3 py-2 rounded-md text-gray-800 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                >
+                  Bacaan
+                </a>
+              </li>
+              <li id="mobile-login-container" class="pt-2">
+                <a
+                  href="#/login"
+                  class="block px-3 py-2 rounded-md text-blue-600 hover:bg-blue-50 transition-colors"
+                >
+                  LOGIN
+                </a>
+              </li>
+              <li id="mobile-register-container">
+                <a
+                  href="#/register"
+                  class="block px-3 py-2 rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors text-center"
+                >
+                  REGISTER
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </header>
+
+      <main id="main-content" class="w-full" tabindex="-1"></main>
+    </div>
   </body>
   <script>
     document.addEventListener("DOMContentLoaded", function () {

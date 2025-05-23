@@ -16,69 +16,82 @@ export default class LoginPage {
 
   async render() {
     return `
-    <section
-      class="max-w-md mx-auto p-6 bg-gray-900 rounded-lg shadow-lg border border-red-500"
-      style="box-shadow: 0 0 15px rgba(255, 0, 0, 0.5)"
-    >
-      <div class="header">
-        <p class="text-xs text-red-500 text-center mb-2">*secure login*</p>
+      <div class="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8" style="background-image: url('/assets/images/background-image3.jpg'); background-size: cover; background-position: center;">
+        <div class="sm:mx-auto sm:w-full sm:max-w-md text-center">
+          <div class="flex items-center justify-center mx-auto mb-4 text-blue-600">
+              <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          </div>
+          <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
+            Login ke Akun Anda
+          </h2>
+          <p class="mt-2 text-center text-sm text-gray-600">
+            Atau
+            <a href="#/register" class="font-medium text-blue-600 hover:text-blue-500">
+              buat akun baru
+            </a>
+          </p>
+        </div>
+
+        <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+          <div class="bg-white py-8 px-4 shadow-xl rounded-lg sm:px-10">
+            <form id="loginForm" class="space-y-6">
+              <div>
+                <label for="email" class="block text-sm font-medium text-gray-700">
+                  Alamat Email
+                </label>
+                <div class="mt-1 relative rounded-md shadow-sm">
+                  <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i class="fas fa-envelope text-gray-400"></i>
+                  </div>
+                  <input id="email" name="email" type="email" autocomplete="email" required
+                        class="appearance-none block w-full px-3 py-2 pl-10 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                        placeholder="anda@email.com">
+                </div>
+              </div>
+
+              <div>
+                <label for="password" class="block text-sm font-medium text-gray-700">
+                  Password
+                </label>
+                <div class="mt-1 relative rounded-md shadow-sm">
+                  <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <i class="fas fa-lock text-gray-400"></i>
+                  </div>
+                  <input id="password" name="password" type="password" autocomplete="current-password" required
+                        class="appearance-none block w-full px-3 py-2 pl-10 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                        placeholder="Password Anda">
+                </div>
+              </div>
+
+              <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                  <input id="remember_me" name="remember_me" type="checkbox"
+                        class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                  <label for="remember_me" class="ml-2 block text-sm text-gray-900">
+                    Ingat saya
+                  </label>
+                </div>
+
+                <div class="text-sm">
+                  <a href="#" class="font-medium text-blue-600 hover:text-blue-500">
+                    Lupa password?
+                  </a>
+                </div>
+              </div>
+              
+              <div id="errorMessage" class="text-red-600 text-sm text-center hidden py-2 px-4 bg-red-50 border border-red-200 rounded-md"></div>
+
+              <div>
+                <button type="submit"
+                        class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                  <i class="fas fa-sign-in-alt mr-2 mt-0.5"></i>Login
+                </button>
+              </div>
+            </form>
+
+          </div>
+        </div>
       </div>
-
-      <h1
-        class="text-2xl font-bold text-center mb-6 text-red-500 tracking-wider"
-        style="text-shadow: 0 0 5px rgba(255, 0, 0, 0.7)"
-      >
-        ACCOUNT LOGIN
-      </h1>
-
-      <div class="auth-form-container">
-        <form id="loginForm" class="creepy-form">
-          <div class="form-control mb-4">
-            <label for="email" class="block text-red-400 mb-1 text-sm">Email</label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              placeholder="Enter your email"
-              required
-              class="w-full px-3 py-2 bg-gray-800 border border-red-900 rounded text-white focus:outline-none focus:ring-1 focus:ring-red-500"
-            />
-          </div>
-
-          <div class="form-control mb-4">
-            <label for="password" class="block text-red-400 mb-1 text-sm"
-              >Password</label
-            >
-            <input
-              type="password"
-              id="password"
-              name="password"
-              placeholder="Enter your password"
-              required
-              class="w-full px-3 py-2 bg-gray-800 border border-red-900 rounded text-white focus:outline-none focus:ring-1 focus:ring-red-500"
-            />
-          </div>
-
-          <button
-            type="submit"
-            class="w-full py-2 px-4 bg-red-600 hover:bg-red-700 text-white font-bold rounded mt-4 transition duration-200"
-          >
-            Login
-          </button>
-
-          <div class="text-center text-gray-400 text-sm mt-4">
-            <span>No account? </span>
-            <a href="#/register" class="text-red-400 hover:text-red-300"
-              >Register here</a
-            >
-          </div>
-        </form>
-        <div
-          id="errorMessage"
-          class="text-red-500 text-sm mt-4 text-center hidden"
-        ></div>
-      </div>
-    </section>
 
     `;
   }

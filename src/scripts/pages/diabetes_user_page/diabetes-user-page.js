@@ -1,7 +1,7 @@
 // diabetes-page.js
-import DiabetesPresenter from "./diabetes-presenter.js";
+import DiabetesPresenterUser from "./diabetes-user-presenter.js";
 
-export default class DiabetesPage {
+export default class DiabetesPageUser {
   #presenter;
   #elements = {
     form: null,
@@ -10,14 +10,14 @@ export default class DiabetesPage {
   };
 
   constructor() {
-    this.#presenter = new DiabetesPresenter(this);
+    this.#presenter = new DiabetesPresenterUser(this);
   }
 
   async render() {
     return `
     <section class="container mx-auto px-4 py-8 max-w-3xl">
       <div class="bg-white rounded-lg shadow-md p-6">
-        <h1 class="text-3xl font-bold text-gray-800 mb-6">Diabetes Retina Check</h1>
+        <h1 class="text-3xl font-bold text-gray-800 mb-6">User Diabetes Retina Check</h1>
         <p class="text-gray-600 mb-6">Upload an image of your retina to check for signs of diabetic retinopathy.</p>
         
         <form id="diabetesForm" class="space-y-4">
