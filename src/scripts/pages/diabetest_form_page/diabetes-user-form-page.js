@@ -1,8 +1,8 @@
 // diabetes-page.js
-import DiabetesPresenterUser from "./diabetes-user-presenter.js";
+import DiabetesFormPresenterUser from "./diabetes-user-form-presenter.js";
 import { DiabetesDisplayResult } from "../../utils/indexeddb.js";
 
-export default class DiabetesPageUser {
+export default class DiabetesFormPageUser {
   #presenter;
   #elements = {
     form: null,
@@ -12,7 +12,7 @@ export default class DiabetesPageUser {
   };
 
   constructor() {
-    this.#presenter = new DiabetesPresenterUser(this);
+    this.#presenter = new DiabetesFormPresenterUser(this);
   }
 
   async render() {
@@ -27,8 +27,9 @@ export default class DiabetesPageUser {
             Check Retina
         </div>
         </div>
+           
       <div class="bg-white rounded-lg shadow-md p-6">
-        <h1 class="text-3xl font-bold text-gray-800 mb-6">Diabetes Retina Check</h1>
+        <h1 class="text-3xl font-bold text-gray-800 mb-6">Diabetes Form Check</h1>
         <p class="text-gray-600 mb-6">Upload an image of your retina to check for signs of diabetic retinopathy.</p>
         
         <form id="diabetesForm" class="space-y-4">
@@ -318,19 +319,15 @@ export default class DiabetesPageUser {
                 </p>
               </div>
               
-                <!-- Action Buttons Container -->
-                <div class="flex flex-col items-center justify-center gap-3 px-4 border-l border-gray-200">
-                  <button 
-                    class="delete-btn p-2 text-red-600 hover:bg-red-50 rounded-full transition-colors" 
-                    title="Delete"
-                    data-id="${item.id}"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                    </svg>
-                  </button>
-                </div>
+              <!-- Action Buttons Container -->
+              <div class="flex flex-col items-center justify-center gap-3 px-4 border-l border-gray-200">
+                <button class="p-2 text-red-600 hover:bg-red-50 rounded-full transition-colors" title="Delete">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </button>
               </div>
+            </div>
           </div>
         `
           )
@@ -387,34 +384,6 @@ export default class DiabetesPageUser {
           }
         });
       }
-
-      // Add event listeners for delete buttons
-      document.querySelectorAll(".delete-btn").forEach((button) => {
-        button.addEventListener("click", async (e) => {
-          e.stopPropagation();
-          const id = button.getAttribute("data-id");
-
-          if (confirm("Are you sure you want to delete this history item?")) {
-            try {
-              button.innerHTML = `
-              <div class="w-5 h-5 border-2 border-red-600 border-t-transparent rounded-full animate-spin"></div>
-            `;
-              button.disabled = true;
-
-              await this.#presenter.deleteHistoryItem(id);
-            } catch (error) {
-              alert("Failed to delete item. Please try again.");
-              // Reset button
-              button.innerHTML = `
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-              </svg>
-            `;
-              button.disabled = false;
-            }
-          }
-        });
-      });
     };
 
     // Initial display

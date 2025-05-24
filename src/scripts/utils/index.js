@@ -1,4 +1,4 @@
-const registerServiceWorker = async () => {
+export const registerServiceWorker = async () => {
   if (!("serviceWorker" in navigator)) {
     console.log("Service Worker not supported in this browser");
     return null;
@@ -31,4 +31,18 @@ const registerServiceWorker = async () => {
   }
 };
 
-export default registerServiceWorker;
+export function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      resolve(reader.result);
+    };
+
+    reader.onerror = () => {
+      reject(new Error("Failed to read file"));
+    };
+
+    reader.readAsDataURL(file);
+  });
+}

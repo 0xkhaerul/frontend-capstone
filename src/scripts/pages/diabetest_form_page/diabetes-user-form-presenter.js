@@ -2,7 +2,6 @@
 import {
   predictDiabetesAsUser,
   getAllDiabetesUserHistory,
-  deleteDiabatesUserHistory,
 } from "../../data/api.js";
 
 export default class DiabetesPresenterUser {
@@ -36,18 +35,6 @@ export default class DiabetesPresenterUser {
       this.#view.displayHistory(sortedHistory);
     } catch (error) {
       this.#view.displayHistoryError(error);
-    }
-  }
-
-  async deleteHistoryItem(id) {
-    try {
-      await deleteDiabatesUserHistory(id);
-      // Refresh history setelah delete
-      await this.loadHistory();
-      return true;
-    } catch (error) {
-      console.error("Failed to delete history item:", error);
-      throw error;
     }
   }
 }

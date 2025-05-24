@@ -8,6 +8,61 @@ const ENDPOINTS = {
   LOGIN: `${CONFIG.BASE_URL}/login`,
   DIABETES_PREDICTION: `${CONFIG.DIABETES_PREDICTION}/predict`,
   DIABETES_PREDICTION_GUEST: `${CONFIG.DIABETES_PREDICTION}/predicted/guest`,
+
+  DIABETES_USER_HISTORY: `${CONFIG.BASE_URL}/retina-user`,
+};
+
+// data/api.js
+export const deleteDiabatesUserHistory = async (id) => {
+  const token = getAccessToken();
+  const response = await fetch(`${ENDPOINTS.DIABETES_USER_HISTORY}/${id}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to delete history");
+  }
+
+  return response.json();
+};
+
+export const getAllDiabetesUserHistory = async () => {
+  try {
+    const token = getAccessToken();
+
+    if (!token) {
+      throw new Error("No access token found");
+    }
+
+    const response = await fetch(ENDPOINTS.DIABETES_USER_HISTORY, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(
+        errorData.message || `HTTP error! status: ${response.status}`
+      );
+    }
+
+    const result = await response.json();
+
+    if (result.success) {
+      return result.data;
+    } else {
+      throw new Error(result.message || "Failed to fetch diabetes history");
+    }
+  } catch (error) {
+    console.error("Error fetching diabetes user history:", error);
+    throw error;
+  }
 };
 
 export const predictDiabetesAsUser = async (file) => {

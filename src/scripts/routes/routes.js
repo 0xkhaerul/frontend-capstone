@@ -7,6 +7,7 @@ import LandingPage from "../pages/landing_page/landing-page";
 import LoginPage from "../pages/auth/login/login-page";
 import RegisterPage from "../pages/auth/register/register-page";
 import DiabetesPageUser from "../pages/diabetes_user_page/diabetes-user-page";
+import DiabetesFormPageUser from "../pages/diabetest_form_page/diabetes-user-form-page";
 import { checkAuth, checkUnauth } from "../utils/auth";
 
 const createProtectedRoute = (PageClass) => {
@@ -35,6 +36,7 @@ const routes = {
   "/": createPublicRoute(LandingPage),
   "/diabetes-checked": createPublicRoute(DiabetesCheckedPage),
   "/diabetes-checked-user": createProtectedRoute(DiabetesPageUser),
+  "/diabetes-form-checked-user": createProtectedRoute(DiabetesFormPageUser),
   "/bacaan": createPublicRoute(BacaanPage),
   "/panduan-check": createPublicRoute(PanduanPage),
   "/profile": createProtectedRoute(ProfilePage),
