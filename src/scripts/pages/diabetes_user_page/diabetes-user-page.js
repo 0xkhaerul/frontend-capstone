@@ -7,6 +7,7 @@ export default class DiabetesPageUser {
     form: null,
     fileInput: null,
     resultContainer: null,
+    historyContainer: null,
   };
 
   constructor() {
@@ -15,7 +16,7 @@ export default class DiabetesPageUser {
 
   async render() {
     return `
-    <section class="container mx-auto px-4 py-8 max-w-3xl">
+    <section class="container mx-auto px-4 py-8 max-w-4xl">
       <div class="bg-white rounded-lg shadow-md p-6">
         <h1 class="text-3xl font-bold text-gray-800 mb-6">User Diabetes Retina Check</h1>
         <p class="text-gray-600 mb-6">Upload an image of your retina to check for signs of diabetic retinopathy.</p>
@@ -38,10 +39,24 @@ export default class DiabetesPageUser {
             Analyze Retina Image
           </button>
         </form>
+
+        <!-- Cache Controls -->
+        <div class="mt-4 flex gap-2">
+          <button id="showHistoryBtn" class="bg-gray-500 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded-lg transition-colors text-sm">
+            Show History
+          </button>
+          <button id="clearCacheBtn" class="bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-lg transition-colors text-sm">
+            Clear Cache
+          </button>
+        </div>
       </div>
 
       <div id="result" class="mt-6 hidden">
         <!-- Results will be displayed here -->
+      </div>
+
+      <div id="history" class="mt-6 hidden">
+        <!-- History will be displayed here -->
       </div>
     </section>
     `;
@@ -52,7 +67,11 @@ export default class DiabetesPageUser {
       form: document.getElementById("diabetesForm"),
       fileInput: document.getElementById("retinaImage"),
       resultContainer: document.getElementById("result"),
+      historyContainer: document.getElementById("history"),
     };
+
+    // Load cached data on page load
+    await this.#presenter.loadCachedData();
 
     // Show file name when selected
     this.#elements.fileInput.addEventListener("change", (e) => {
@@ -73,13 +92,30 @@ export default class DiabetesPageUser {
       }
     });
 
+    // Form submission
     this.#elements.form.addEventListener("submit", async (e) => {
       e.preventDefault();
       const file = this.#elements.fileInput.files[0];
       if (file) {
-        this.#presenter.handleFileUpload(file);
+        await this.#presenter.handleFileUpload(file);
       }
     });
+
+    // Show history button
+    document
+      .getElementById("showHistoryBtn")
+      .addEventListener("click", async () => {
+        await this.showHistory();
+      });
+
+    // Clear cache button
+    document
+      .getElementById("clearCacheBtn")
+      .addEventListener("click", async () => {
+        if (confirm("Are you sure you want to clear all cached predictions?")) {
+          await this.#presenter.clearCache();
+        }
+      });
   }
 
   showLoading() {
@@ -94,16 +130,20 @@ export default class DiabetesPageUser {
     `;
   }
 
-  displayResults(data) {
+  displayResults(data, isCached = false) {
+    const cacheIndicator = isCached ? `` : "";
+
+    this.#elements.resultContainer.classList.remove("hidden");
     this.#elements.resultContainer.innerHTML = `
       <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
         <h2 class="text-2xl font-bold text-gray-800">Analysis Results</h2>
+        ${cacheIndicator}
         
         <div class="flex flex-col md:flex-row gap-6">
           <div class="flex-1">
             <h3 class="text-lg font-medium text-gray-700 mb-2">Retina Image</h3>
             <img src="${
-              data.image.url
+              data.image?.url || data.originalFile?.data || ""
             }" alt="Analyzed retina" class="w-full h-auto rounded-lg border border-gray-200">
           </div>
           
@@ -136,6 +176,19 @@ export default class DiabetesPageUser {
                   }%"></div>
                 </div>
               </div>
+
+              ${
+                data.timestamp
+                  ? `
+              <div>
+                <p class="text-sm text-gray-500">Analysis Date</p>
+                <p class="text-sm text-gray-700">
+                  ${new Date(data.timestamp).toLocaleString()}
+                </p>
+              </div>
+              `
+                  : ""
+              }
             </div>
             
             <div class="mt-6 p-4 bg-blue-50 rounded-lg">
@@ -153,8 +206,95 @@ export default class DiabetesPageUser {
     `;
   }
 
+  displayCachedResults(data) {
+    if (data) {
+      this.displayResults(data, true);
+    }
+  }
+
+  async showHistory() {
+    const predictions = await this.#presenter.getAllCachedPredictions();
+
+    if (predictions.length === 0) {
+      this.#elements.historyContainer.innerHTML = `
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h2 class="text-2xl font-bold text-gray-800 mb-4">Prediction History</h2>
+          <p class="text-gray-600">No cached predictions found.</p>
+        </div>
+      `;
+    } else {
+      const historyHTML = predictions
+        .map(
+          (prediction, index) => `
+        <div class="bg-white rounded-lg shadow-md p-4 mb-4">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="text-lg font-medium text-gray-800">
+              ${prediction.originalFile?.name || `Prediction ${index + 1}`}
+            </h3>
+            <span class="text-sm text-gray-500">
+              ${new Date(prediction.timestamp).toLocaleString()}
+            </span>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <img src="${
+                prediction.originalFile?.data || prediction.image?.url
+              }" 
+                   alt="Retina scan" 
+                   class="w-full h-32 object-cover rounded-lg">
+            </div>
+            <div>
+              <p class="text-sm text-gray-500">Diagnosis</p>
+              <p class="font-semibold ${
+                prediction.prediction.class === "No_Dr"
+                  ? "text-green-600"
+                  : "text-red-600"
+              }">
+                ${
+                  prediction.prediction.class === "No_Dr"
+                    ? "No DR Detected"
+                    : "DR Detected"
+                }
+              </p>
+            </div>
+            <div>
+              <p class="text-sm text-gray-500">Confidence</p>
+              <p class="font-semibold">${(
+                prediction.prediction.confidence * 100
+              ).toFixed(2)}%</p>
+            </div>
+          </div>
+        </div>
+      `
+        )
+        .join("");
+
+      this.#elements.historyContainer.innerHTML = `
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h2 class="text-2xl font-bold text-gray-800 mb-4">Prediction History (${predictions.length})</h2>
+          ${historyHTML}
+        </div>
+      `;
+    }
+
+    this.#elements.historyContainer.classList.remove("hidden");
+  }
+
+  showCacheCleared() {
+    this.#elements.resultContainer.innerHTML = `
+      <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4">
+        <p class="font-bold">Success</p>
+        <p>Cache cleared successfully.</p>
+      </div>
+    `;
+    this.#elements.resultContainer.classList.remove("hidden");
+    this.#elements.historyContainer.classList.add("hidden");
+  }
+
   displayError(error) {
     console.error("Error:", error);
+    this.#elements.resultContainer.classList.remove("hidden");
     this.#elements.resultContainer.innerHTML = `
       <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4" role="alert">
         <p class="font-bold">Error</p>
