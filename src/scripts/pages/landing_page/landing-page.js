@@ -13,7 +13,7 @@ export default class LandingPage {
           <p class="text-xl md:text-2xl text-blue-100 mb-10 max-w-3xl mx-auto opacity-0 transform -translate-y-10 animate-fadeInUp" style="animation-delay: 0.4s;">
             Gunakan alat pemeriksaan risiko diabetes kami yang canggih, cepat, dan berbasis data untuk menjaga kesehatan Anda.
           </p>
-          <a href="#/diabetes-checked" 
+          <a href="#/diabetes-checked-user" 
              class="bg-teal-500 hover:bg-teal-600 text-white font-semibold px-10 py-4 text-lg rounded-lg 
                     transition-all duration-300 ease-in-out transform hover:scale-110 focus:outline-none focus:ring-2 
                     focus:ring-teal-400 focus:ring-opacity-75 opacity-0 transform -translate-y-10 animate-fadeInUp" 

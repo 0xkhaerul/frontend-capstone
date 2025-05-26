@@ -1,4 +1,3 @@
-import DiabetesCheckedPage from "../pages/diabetes_page/diabetes-page";
 import BacaanPage from "../pages/bacaan_page/bacaan-page";
 import PanduanPage from "../pages/panduan_page/panduan-page";
 import RiwayatPage from "../pages/riwayat_page/riwayat-page";
@@ -34,7 +33,6 @@ const createPublicRoute = (PageClass) => {
 
 const routes = {
   "/": createPublicRoute(LandingPage),
-  "/diabetes-checked": createPublicRoute(DiabetesCheckedPage),
   "/diabetes-checked-user": createProtectedRoute(DiabetesPageUser),
   "/diabetes-form-checked-user": createProtectedRoute(DiabetesFormPageUser),
   "/bacaan": createPublicRoute(BacaanPage),

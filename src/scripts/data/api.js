@@ -6,10 +6,104 @@ const ENDPOINTS = {
   // Auth
   REGISTER: `${CONFIG.BASE_URL}/register`,
   LOGIN: `${CONFIG.BASE_URL}/login`,
-  DIABETES_PREDICTION: `${CONFIG.DIABETES_PREDICTION}/predict`,
-  DIABETES_PREDICTION_GUEST: `${CONFIG.DIABETES_PREDICTION}/predicted/guest`,
 
   DIABETES_USER_HISTORY: `${CONFIG.BASE_URL}/retina-user`,
+  DIABETES_USER_FORM_HISTORY: `${CONFIG.BASE_URL}/form-check-history`,
+
+  // machine learning
+  DIABETES_PREDICTION: `${CONFIG.DIABETES_PREDICTION}/predict`,
+  DIABETES_FORM_PREDICTION: `${CONFIG.DIABETES_FORM_PREDICTION}/predict-history`,
+};
+
+export const getAllDiabetesUserFormHistory = async () => {
+  const token = getAccessToken();
+  if (!token) throw new Error("No access token available");
+
+  const response = await fetch(ENDPOINTS.DIABETES_USER_FORM_HISTORY, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || "Failed to fetch form check history");
+  }
+
+  const apiResponse = await response.json();
+
+  // Pastikan kita mengakses data yang benar
+  if (!apiResponse.success || !apiResponse.data) {
+    throw new Error("Invalid API response format");
+  }
+
+  // Langsung return data tanpa transformasi
+  return apiResponse.data;
+};
+
+export const deleteDiabatesUserFormHistory = async (id) => {
+  const token = getAccessToken();
+  const response = await fetch(
+    `${ENDPOINTS.DIABETES_USER_FORM_HISTORY}/${id}`,
+    {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to delete history");
+  }
+
+  return response.json();
+};
+
+export const predictDiabetesFormAsUser = async (formData) => {
+  const token = getAccessToken();
+  if (!token) throw new Error("No access token available");
+
+  const response = await fetch(ENDPOINTS.DIABETES_FORM_PREDICTION, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(formData),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || "Form prediction failed");
+  }
+
+  return await response.json();
+};
+
+export const predictDiabetesAsUser = async (file) => {
+  const token = getAccessToken();
+  if (!token) throw new Error("No access token available");
+
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const response = await fetch(ENDPOINTS.DIABETES_PREDICTION, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: formData,
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || "Authenticated prediction failed");
+  }
+
+  return await response.json();
 };
 
 // data/api.js
@@ -63,45 +157,6 @@ export const getAllDiabetesUserHistory = async () => {
     console.error("Error fetching diabetes user history:", error);
     throw error;
   }
-};
-
-export const predictDiabetesAsUser = async (file) => {
-  const token = getAccessToken();
-  if (!token) throw new Error("No access token available");
-
-  const formData = new FormData();
-  formData.append("file", file);
-
-  const response = await fetch(ENDPOINTS.DIABETES_PREDICTION, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    body: formData,
-  });
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || "Authenticated prediction failed");
-  }
-
-  return await response.json();
-};
-
-export const predictDiabetes = async (file) => {
-  const formData = new FormData();
-  formData.append("file", file);
-
-  const response = await fetch(ENDPOINTS.DIABETES_PREDICTION_GUEST, {
-    method: "POST",
-    body: formData,
-  });
-
-  if (!response.ok) {
-    throw new Error("API request failed");
-  }
-
-  return await response.json();
 };
 
 export async function register({ name, email, password }) {

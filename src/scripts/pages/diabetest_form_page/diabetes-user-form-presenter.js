@@ -1,33 +1,31 @@
-// diabetes-presenter.js
 import {
-  predictDiabetesAsUser,
-  getAllDiabetesUserHistory,
+  predictDiabetesFormAsUser,
+  getAllDiabetesUserFormHistory,
+  deleteDiabatesUserFormHistory,
 } from "../../data/api.js";
 
-export default class DiabetesPresenterUser {
+export default class DiabetesFormPresenterUser {
   #view;
 
   constructor(view) {
     this.#view = view;
   }
 
-  async handleFileUpload(file) {
+  async handleFormSubmit(formData) {
     this.#view.showLoading();
 
     try {
-      const data = await predictDiabetesAsUser(file);
+      const data = await predictDiabetesFormAsUser(formData);
       this.#view.displayResults(data);
-      // Refresh history after new prediction
       await this.loadHistory();
     } catch (error) {
       this.#view.displayError(error);
     }
   }
 
-  // diabetes-presenter.js
   async loadHistory() {
     try {
-      const history = await getAllDiabetesUserHistory();
+      const history = await getAllDiabetesUserFormHistory();
       // Sort by createdAt in descending order (newest first)
       const sortedHistory = history.sort(
         (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
@@ -35,6 +33,18 @@ export default class DiabetesPresenterUser {
       this.#view.displayHistory(sortedHistory);
     } catch (error) {
       this.#view.displayHistoryError(error);
+    }
+  }
+
+  async deleteHistoryItem(id) {
+    try {
+      await deleteDiabatesUserFormHistory(id);
+      // Refresh history setelah delete
+      await this.loadHistory();
+      return true;
+    } catch (error) {
+      console.error("Failed to delete history item:", error);
+      throw error;
     }
   }
 }

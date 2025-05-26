@@ -67,9 +67,6 @@ class App {
     const loginContainer = document.getElementById("login-container");
     const registerContainer = document.getElementById("register-container");
     const profileContainer = document.getElementById("profile-container");
-    const diabetesCheckedGuestContainer = document.getElementById(
-      "diabetes-checked-guest-container"
-    );
     const diabetesCheckedUserContainer = document.getElementById(
       "diabetes-checked-user-container"
     );
@@ -77,8 +74,6 @@ class App {
     if (isLoggedIn) {
       // User is logged in - show profile
 
-      if (diabetesCheckedGuestContainer)
-        diabetesCheckedGuestContainer.style.display = "none";
       if (diabetesCheckedUserContainer)
         diabetesCheckedUserContainer.style.display = "block";
       if (loginContainer) loginContainer.style.display = "none";
@@ -86,8 +81,6 @@ class App {
       if (profileContainer) profileContainer.style.display = "block";
     } else {
       // User is not logged in - show login and register
-      if (diabetesCheckedGuestContainer)
-        diabetesCheckedGuestContainer.style.display = "block";
       if (diabetesCheckedUserContainer)
         diabetesCheckedUserContainer.style.display = "none";
       if (loginContainer) loginContainer.style.display = "block";

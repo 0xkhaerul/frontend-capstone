@@ -1,12 +1,11 @@
-// diabetes-page.js
+// diabetes-form-page.js
 import DiabetesFormPresenterUser from "./diabetes-user-form-presenter.js";
-import { DiabetesDisplayResult } from "../../utils/indexeddb.js";
+import { DiabetesFormDisplayResult } from "../../utils/indexeddb.js";
 
 export default class DiabetesFormPageUser {
   #presenter;
   #elements = {
     form: null,
-    fileInput: null,
     resultContainer: null,
     historyContainer: null,
   };
@@ -18,7 +17,8 @@ export default class DiabetesFormPageUser {
   async render() {
     return `
     <section class="container mx-auto px-4 py-8 max-w-3xl">
-       <div class="flex gap-2 mb-2">
+
+      <div class="flex gap-2 mb-2">
         <div id="form-check-page" class="border border-gray-300 rounded-md p-4 flex-1 flex justify-center items-center cursor-pointer hover:bg-gray-100 transition-colors">
             Form Check
         </div>
@@ -27,27 +27,73 @@ export default class DiabetesFormPageUser {
             Check Retina
         </div>
         </div>
-           
       <div class="bg-white rounded-lg shadow-md p-6">
-        <h1 class="text-3xl font-bold text-gray-800 mb-6">Diabetes Form Check</h1>
-        <p class="text-gray-600 mb-6">Upload an image of your retina to check for signs of diabetic retinopathy.</p>
+ 
+        <h1 class="text-3xl font-bold text-gray-800 mb-6">Diabetes Risk Assessment</h1>
+        <p class="text-gray-600 mb-6">Fill out the form to assess your risk of diabetes.</p>
         
         <form id="diabetesForm" class="space-y-4">
-          <div class="flex items-center justify-center w-full">
-            <label for="retinaImage" class="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors">
-              <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                <svg class="w-8 h-8 mb-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
-                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
-                </svg>
-                <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Click to upload</span> or drag and drop</p>
-                <p class="text-xs text-gray-500">JPG or PNG (MAX. 5MB)</p>
-              </div>
-              <input id="retinaImage" name="file" type="file" class="hidden" accept="image/*" required />
-            </label>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Existing fields -->
+            <div>
+              <label for="hypertension" class="block text-sm font-medium text-gray-700 mb-1">Hypertension</label>
+              <select id="hypertension" name="hypertension" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" required>
+                <option value="" disabled selected>Select option</option>
+                <option value="1">Yes</option>
+                <option value="0">No</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="heart_disease" class="block text-sm font-medium text-gray-700 mb-1">Heart Disease</label>
+              <select id="heart_disease" name="heart_disease" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" required>
+                <option value="" disabled selected>Select option</option>
+                <option value="1">Yes</option>
+                <option value="0">No</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="bmi" class="block text-sm font-medium text-gray-700 mb-1">BMI</label>
+              <input type="number" id="bmi" name="bmi" step="0.1" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="e.g. 28.5" required>
+            </div>
+
+            <div>
+              <label for="blood_glucose_level" class="block text-sm font-medium text-gray-700 mb-1">Blood Glucose Level (mg/dL)</label>
+              <input type="number" id="blood_glucose_level" name="blood_glucose_level" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="e.g. 150" required>
+            </div>
+
+            <div>
+              <label for="HbA1c_level" class="block text-sm font-medium text-gray-700 mb-1">HbA1c Level (%)</label>
+              <input type="number" id="HbA1c_level" name="HbA1c_level" step="0.1" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="e.g. 6.2" required>
+            </div>
+
+            <div>
+              <label for="smoking_history" class="block text-sm font-medium text-gray-700 mb-1">Smoking History</label>
+              <select id="smoking_history" name="smoking_history" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" required>
+                <option value="" disabled selected>Select option</option>
+                <option value="never">Never</option>
+                <option value="former">Former</option>
+                <option value="current">Current</option>
+              </select>
+            </div>
+            <div>
+              <label for="gender" class="block text-sm font-medium text-gray-700 mb-1">Gender</label>
+              <select id="gender" name="gender" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" required>
+                <option value="" disabled selected>Select gender</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="age" class="block text-sm font-medium text-gray-700 mb-1">Age</label>
+              <input type="number" id="age" name="age" min="1" max="120" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="e.g. 45" required>
+            </div>
           </div>
           
           <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-            Analyze Retina Image
+            Check Diabetes Risk
           </button>
         </form>
       </div>
@@ -78,7 +124,6 @@ export default class DiabetesFormPageUser {
   async afterRender() {
     this.#elements = {
       form: document.getElementById("diabetesForm"),
-      fileInput: document.getElementById("retinaImage"),
       resultContainer: document.getElementById("result"),
       historyContainer: document.getElementById("historyList"),
       formCheckPage: document.getElementById("form-check-page"),
@@ -94,6 +139,21 @@ export default class DiabetesFormPageUser {
 
     await this.#loadLastResultFromIndexedDB();
 
+    this.#elements.form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const formData = {
+        hypertension: this.#elements.form.hypertension.value,
+        heart_disease: this.#elements.form.heart_disease.value,
+        bmi: this.#elements.form.bmi.value,
+        blood_glucose_level: this.#elements.form.blood_glucose_level.value,
+        HbA1c_level: this.#elements.form.HbA1c_level.value,
+        smoking_history: this.#elements.form.smoking_history.value,
+        gender: this.#elements.form.gender.value,
+        age: this.#elements.form.age.value,
+      };
+      this.#presenter.handleFormSubmit(formData);
+    });
+
     // Add click event listeners for navigation
     this.#elements.formCheckPage.addEventListener("click", () => {
       window.location.hash = "#/diabetes-form-checked-user";
@@ -101,33 +161,6 @@ export default class DiabetesFormPageUser {
 
     this.#elements.retinaCheckPage.addEventListener("click", () => {
       window.location.hash = "#/diabetes-checked-user";
-    });
-
-    // Show file name when selected
-    this.#elements.fileInput.addEventListener("change", (e) => {
-      const fileName = e.target.files[0]?.name;
-      if (fileName) {
-        const uploadLabel = document.querySelector('label[for="retinaImage"]');
-        const existingFileName = uploadLabel.querySelector(".file-name");
-
-        if (existingFileName) {
-          existingFileName.textContent = fileName;
-        } else {
-          const fileNameElement = document.createElement("p");
-          fileNameElement.className =
-            "file-name mt-2 text-sm font-medium text-gray-700";
-          fileNameElement.textContent = fileName;
-          uploadLabel.querySelector("div").appendChild(fileNameElement);
-        }
-      }
-    });
-
-    this.#elements.form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const file = this.#elements.fileInput.files[0];
-      if (file) {
-        this.#presenter.handleFileUpload(file);
-      }
     });
   }
 
@@ -137,73 +170,124 @@ export default class DiabetesFormPageUser {
       <div class="bg-white rounded-lg shadow-md p-6">
         <div class="flex items-center justify-center space-x-2">
           <div class="w-5 h-5 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-          <p class="text-gray-700">Analyzing retina image...</p>
+          <p class="text-gray-700">Analyzing your diabetes risk...</p>
         </div>
       </div>
     `;
   }
 
-  // Perbaiki method displayResults dengan parameter default
   displayResults(data, saveToIndexedDB = true) {
     this.#elements.resultContainer.classList.remove("hidden");
     this.#elements.resultContainer.innerHTML = `
-    <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
-      <h2 class="text-2xl font-bold text-gray-800">Analysis Results</h2>
-      
-      <div class="flex flex-col md:flex-row gap-6">
-        <div class="flex-1">
-          <h3 class="text-lg font-medium text-gray-700 mb-2">Retina Image</h3>
-          <img src="${
-            data.image.url
-          }" alt="Analyzed retina" class="w-full h-auto rounded-lg border border-gray-200">
-        </div>
+      <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
+        <h2 class="text-2xl font-bold text-gray-800">Assessment Results</h2>
         
-        <div class="flex-1">
-          <h3 class="text-lg font-medium text-gray-700 mb-2">Diagnosis</h3>
-          <div class="space-y-3">
-            <div>
-              <p class="text-sm text-gray-500">Condition</p>
-              <p class="text-lg font-semibold ${
-                data.prediction.class === "No_Dr"
-                  ? "text-green-600"
-                  : "text-red-600"
-              }">
-                ${
-                  data.prediction.class === "No_Dr"
-                    ? "No Diabetic Retinopathy Detected"
-                    : "Diabetic Retinopathy Detected"
-                }
-              </p>
-            </div>
-            
-            <div>
-              <p class="text-sm text-gray-500">Confidence Level</p>
-              <p class="text-lg font-semibold text-gray-800">
-                ${(data.prediction.confidence * 100).toFixed(2)}%
-              </p>
-              <div class="w-full bg-gray-200 rounded-full h-2.5 mt-1">
-                <div class="bg-blue-600 h-2.5 rounded-full" style="width: ${
-                  data.prediction.confidence * 100
-                }%"></div>
-              </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <h3 class="text-lg font-medium text-gray-700 mb-2">Input Data</h3>
+            <div class="bg-gray-50 p-4 rounded-lg">
+              <ul class="space-y-2">
+                <li class="flex justify-between">
+                  <span class="text-gray-600">Gender:</span>
+                  <span class="font-medium capitalize">${
+                    data.inputData.gender || "N/A"
+                  }</span>
+                </li>
+                <li class="flex justify-between">
+                  <span class="text-gray-600">Age:</span>
+                  <span class="font-medium">${
+                    data.inputData.age || "N/A"
+                  } years</span>
+                </li>
+                <li class="flex justify-between">
+                  <span class="text-gray-600">Hypertension:</span>
+                  <span class="font-medium">${
+                    data.inputData.hypertension === "1" ? "Yes" : "No"
+                  }</span>
+                </li>
+                <li class="flex justify-between">
+                  <span class="text-gray-600">Heart Disease:</span>
+                  <span class="font-medium">${
+                    data.inputData.heart_disease === "1" ? "Yes" : "No"
+                  }</span>
+                </li>
+                <li class="flex justify-between">
+                  <span class="text-gray-600">BMI:</span>
+                  <span class="font-medium">${data.inputData.bmi}</span>
+                </li>
+                <li class="flex justify-between">
+                  <span class="text-gray-600">Blood Glucose:</span>
+                  <span class="font-medium">${
+                    data.inputData.blood_glucose_level
+                  } mg/dL</span>
+                </li>
+                <li class="flex justify-between">
+                  <span class="text-gray-600">HbA1c Level:</span>
+                  <span class="font-medium">${
+                    data.inputData.HbA1c_level
+                  }%</span>
+                </li>
+                <li class="flex justify-between">
+                  <span class="text-gray-600">Smoking History:</span>
+                  <span class="font-medium capitalize">${
+                    data.inputData.smoking_history
+                  }</span>
+                </li>
+              </ul>
             </div>
           </div>
           
-          <div class="mt-6 p-4 bg-blue-50 rounded-lg">
-            <p class="text-sm text-blue-800">
-              ${
-                data.prediction.class === "No_Dr"
-                  ? "No signs of diabetic retinopathy were detected in your retina image. However, regular check-ups are still recommended."
-                  : "Potential signs of diabetic retinopathy were detected. Please consult with an ophthalmologist for further evaluation."
-              }
-            </p>
+          <div>
+            <h3 class="text-lg font-medium text-gray-700 mb-2">Diagnosis</h3>
+            <div class="space-y-4">
+              <div class="p-4 rounded-lg ${
+                data.prediction.result === 1
+                  ? "bg-red-50 border border-red-200"
+                  : "bg-green-50 border border-green-200"
+              }">
+                <div class="flex items-center justify-between">
+                  <h4 class="text-lg font-semibold ${
+                    data.prediction.result === 1
+                      ? "text-red-800"
+                      : "text-green-800"
+                  }">
+                    ${
+                      data.prediction.resultText === "positive"
+                        ? "High Risk"
+                        : "Low Risk"
+                    }
+                  </h4>
+                  <span class="px-3 py-1 rounded-full text-sm font-medium ${
+                    data.prediction.result === 1
+                      ? "bg-red-100 text-red-800"
+                      : "bg-green-100 text-green-800"
+                  }">
+                    ${
+                      data.prediction.resultText === "positive"
+                        ? "Positive"
+                        : "Negative"
+                    }
+                  </span>
+                </div>
+                <p class="mt-2 text-sm ${
+                  data.prediction.result === 1
+                    ? "text-red-700"
+                    : "text-green-700"
+                }">
+                  ${data.message}
+                </p>
+              </div>
+              
+              <div class="text-sm text-gray-500">
+                <p>Assessment ID: ${data.recordId}</p>
+                <p>Date: ${new Date(data.timestamp).toLocaleString()}</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  `;
+    `;
 
-    // Hanya simpan ke IndexedDB jika bukan dari hasil load
     if (saveToIndexedDB) {
       this.#saveResultToIndexedDB(data);
     }
@@ -211,20 +295,21 @@ export default class DiabetesFormPageUser {
 
   async #saveResultToIndexedDB(data) {
     try {
-      await DiabetesDisplayResult.saveResult(data);
+      await DiabetesFormDisplayResult.saveResult(data);
       console.log("Result saved to IndexedDB");
     } catch (error) {
       console.error("Failed to save to IndexedDB:", error);
     }
   }
 
-  // Saat load dari IndexedDB
   async #loadLastResultFromIndexedDB() {
     try {
-      const results = await DiabetesDisplayResult.getAllResults();
+      const results = await DiabetesFormDisplayResult.getAllResults();
       if (results.length > 0) {
-        const lastResult = results.sort((a, b) => b.savedAt - a.savedAt)[0];
-        this.displayResults(lastResult, false); // Eksplisit false
+        const lastResult = results.sort(
+          (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
+        )[0];
+        this.displayResults(lastResult, false);
       }
     } catch (error) {
       console.error("Failed to load last result from IndexedDB:", error);
@@ -237,14 +322,16 @@ export default class DiabetesFormPageUser {
     this.#elements.resultContainer.innerHTML = `
       <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4" role="alert">
         <p class="font-bold">Error</p>
-        <p>Failed to analyze the retina image. Please try again later.</p>
+        <p>${
+          error.message ||
+          "Failed to analyze the form data. Please try again later."
+        }</p>
       </div>
     `;
   }
 
-  // diabetes-page.js
   displayHistory(historyItems) {
-    if (historyItems.length === 0) {
+    if (!Array.isArray(historyItems) || historyItems.length === 0) {
       this.#elements.historyContainer.innerHTML = `
         <div class="text-center py-8 text-gray-500">
           <p>No previous results found.</p>
@@ -252,6 +339,9 @@ export default class DiabetesFormPageUser {
       `;
       return;
     }
+
+    // Sort by createdAt in descending order to show latest first
+    historyItems.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
     // Pagination variables
     const itemsPerPage = 5;
@@ -269,103 +359,130 @@ export default class DiabetesFormPageUser {
           .map(
             (item) => `
           <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors mb-4">
-            <div class="flex flex-col md:flex-row gap-4">
-              <div class="flex-shrink-0">
-                <img src="${
-                  item.image
-                }" alt="Retina scan" class="w-32 h-32 object-cover rounded-lg border border-gray-200">
-              </div>
-              
-              <div class="flex-1">
-                <div class="flex justify-between items-start">
-                  <div>
-                    <h3 class="font-medium text-gray-800">
-                      ${new Date(item.createdAt).toLocaleDateString("id-ID", {
-                        day: "numeric",
-                        month: "long",
-                        year: "numeric",
-                      })}
-                    </h3>
-                    <p class="text-sm text-gray-500">
-                      ${new Date(item.createdAt).toLocaleTimeString("id-ID", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </p>
-                  </div>
-                  <span class="px-2 py-1 text-xs rounded-full ${
-                    item.predictedClass === "No_Dr"
-                      ? "bg-green-100 text-green-800"
-                      : "bg-red-100 text-red-800"
-                  }">
-                    ${
-                      item.predictedClass === "No_Dr"
-                        ? "Normal"
-                        : "Diabetic Retinopathy"
-                    }
-                  </span>
-                </div>
-                
-                <p class="text-sm text-gray-600 mt-1">
-                  Confidence: ${(item.confidenceClass * 100).toFixed(2)}%
-                </p>
-                <div class="w-full bg-gray-200 rounded-full h-2 mt-2">
-                  <div class="bg-blue-600 h-2 rounded-full" style="width: ${
-                    item.confidenceClass * 100
-                  }%"></div>
-                </div>
-                <p class="text-xs text-gray-500 mt-2">
-                  Saved: ${item.savedStatus ? "Yes" : "No"}
+            <div class="flex justify-between items-start">
+              <div>
+                <h3 class="font-medium text-gray-800">
+                  ${new Date(item.createdAt).toLocaleDateString("id-ID", {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                  })}
+                </h3>
+                <p class="text-sm text-gray-500">
+                  ${new Date(item.createdAt).toLocaleTimeString("id-ID", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
                 </p>
               </div>
-              
-              <!-- Action Buttons Container -->
-              <div class="flex flex-col items-center justify-center gap-3 px-4 border-l border-gray-200">
-                <button class="p-2 text-red-600 hover:bg-red-50 rounded-full transition-colors" title="Delete">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <span class="px-2 py-1 text-xs rounded-full ${
+                item.predictionResult === "positive"
+                  ? "bg-red-100 text-red-800"
+                  : "bg-green-100 text-green-800"
+              }">
+                ${
+                  item.predictionResult === "positive"
+                    ? "High Risk"
+                    : "Low Risk"
+                }
+              </span>
+            </div>
+            
+            <div class="mt-3 grid grid-cols-2 gap-2 text-sm">
+              <div>
+                <p class="text-gray-500">Gender</p>
+                <p class="capitalize">${item.gender || "N/A"}</p>
+              </div>
+              <div>
+                <p class="text-gray-500">Age</p>
+                <p>${item.age || "N/A"} years</p>
+              </div>
+              <div class="mt-2">
+                <p class="text-gray-500">BMI</p>
+                <p>${item.bmi}</p>
+              </div>
+              <div class="mt-2">
+                <p class="text-gray-500">Glucose</p>
+                <p>${item.bloodGlucoseLevel} mg/dL</p>
+              </div>
+              <div class="mt-2">
+                <p class="text-gray-500">HbA1c</p>
+                <p>${item.hba1cLevel}%</p>
+              </div>
+              <div class="mt-2">
+                <p class="text-gray-500">Smoking</p>
+                <p class="capitalize">${item.smokingHistory}</p>
+              </div>
+            </div>
+            
+            <div class="mt-3 grid grid-cols-2 gap-2 text-sm">
+              <div>
+                <p class="text-gray-500">Hypertension</p>
+                <p>${item.hypertension ? "Yes" : "No"}</p>
+              </div>
+              <div>
+                <p class="text-gray-500">Heart Disease</p>
+                <p>${item.heartDisease ? "Yes" : "No"}</p>
+              </div>
+            </div>
+            
+            <div class="mt-3 p-3 bg-gray-50 rounded">
+              <p class="text-sm text-gray-600">
+                ${
+                  item.predictionResult === "positive"
+                    ? "Based on your assessment, you have a higher risk of diabetes. Please consult with a healthcare professional."
+                    : "Based on your assessment, you have a lower risk of diabetes. Continue maintaining a healthy lifestyle."
+                }
+              </p>
+            </div>
+            
+            <div class="mt-3 flex justify-between items-center">
+              <div class="text-xs text-gray-400">
+                User: ${item.user.name}
+              </div>
+              <div class="flex gap-2">
+                <button 
+                  class="delete-btn p-2 text-red-600 hover:bg-red-50 rounded-full transition-colors" 
+                  title="Delete"
+                  data-id="${item.id}"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                   </svg>
                 </button>
               </div>
             </div>
-          </div>
-        `
+          </div>`
           )
           .join("")}
-  
-        ${
-          totalPages > 1
-            ? `
-          <div class="flex justify-between items-center mt-6">
-            <button 
-              id="prevPage" 
-              class="px-4 py-2 bg-gray-200 rounded-lg ${
-                currentPage === 1
-                  ? "opacity-50 cursor-not-allowed"
-                  : "hover:bg-gray-300"
-              }"
-              ${currentPage === 1 ? "disabled" : ""}
-            >
-              Previous
-            </button>
-            <span class="text-sm text-gray-600">
-              Page ${currentPage} of ${totalPages}
-            </span>
-            <button 
-              id="nextPage" 
-              class="px-4 py-2 bg-gray-200 rounded-lg ${
-                currentPage === totalPages
-                  ? "opacity-50 cursor-not-allowed"
-                  : "hover:bg-gray-300"
-              }"
-              ${currentPage === totalPages ? "disabled" : ""}
-            >
-              Next
-            </button>
-          </div>
-        `
-            : ""
-        }
+
+        <div class="flex justify-between items-center mt-6">
+          <button 
+            id="prevPage" 
+            class="px-4 py-2 border rounded-md ${
+              currentPage === 1
+                ? "opacity-50 cursor-not-allowed"
+                : "hover:bg-gray-50"
+            }"
+            ${currentPage === 1 ? "disabled" : ""}
+          >
+            Previous
+          </button>
+          <span class="text-sm text-gray-600">
+            Page ${currentPage} of ${totalPages}
+          </span>
+          <button 
+            id="nextPage" 
+            class="px-4 py-2 border rounded-md ${
+              currentPage === totalPages
+                ? "opacity-50 cursor-not-allowed"
+                : "hover:bg-gray-50"
+            }"
+            ${currentPage === totalPages ? "disabled" : ""}
+          >
+            Next
+          </button>
+        </div>
       `;
 
       // Add event listeners for pagination buttons
@@ -384,6 +501,61 @@ export default class DiabetesFormPageUser {
           }
         });
       }
+
+      // Add event listeners for delete buttons
+      document.querySelectorAll(".delete-btn").forEach((button) => {
+        button.addEventListener("click", async (e) => {
+          e.stopPropagation();
+          const id = button.getAttribute("data-id");
+
+          if (confirm("Are you sure you want to delete this history item?")) {
+            try {
+              button.innerHTML = `
+              <div class="w-4 h-4 border-2 border-red-600 border-t-transparent rounded-full animate-spin"></div>
+            `;
+              button.disabled = true;
+
+              await this.#presenter.deleteHistoryItem(id);
+
+              // Remove the item from historyItems array
+              const itemIndex = historyItems.findIndex(
+                (item) => item.id === id
+              );
+              if (itemIndex > -1) {
+                historyItems.splice(itemIndex, 1);
+              }
+
+              // Recalculate pagination after deletion
+              const newTotalPages = Math.ceil(
+                historyItems.length / itemsPerPage
+              );
+              if (currentPage > newTotalPages && newTotalPages > 0) {
+                currentPage = newTotalPages;
+              }
+
+              // Refresh display
+              if (historyItems.length === 0) {
+                this.#elements.historyContainer.innerHTML = `
+                  <div class="text-center py-8 text-gray-500">
+                    <p>No previous results found.</p>
+                  </div>
+                `;
+              } else {
+                displayCurrentPage();
+              }
+            } catch (error) {
+              alert("Failed to delete item. Please try again.");
+              // Reset button
+              button.innerHTML = `
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+            `;
+              button.disabled = false;
+            }
+          }
+        });
+      });
     };
 
     // Initial display
