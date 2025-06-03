@@ -4,7 +4,7 @@ import CONFIG from "../config";
 
 const ENDPOINTS = {
   // Auth
-  REGISTER: `${CONFIG.BASE_URL}/register`,
+  REGISTER: `${CONFIG.BASE_URL}/users`,
   LOGIN: `${CONFIG.BASE_URL}/login`,
 
   DIABETES_USER_HISTORY: `${CONFIG.BASE_URL}/retina-user`,
