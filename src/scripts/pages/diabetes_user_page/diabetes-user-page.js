@@ -8,7 +8,6 @@ export default class DiabetesPageUser {
     form: null,
     fileInput: null,
     resultContainer: null,
-    historyContainer: null,
   };
 
   constructor() {
@@ -54,22 +53,6 @@ export default class DiabetesPageUser {
       <div id="result" class="mt-6 hidden">
         <!-- Results will be displayed here -->
       </div>
-
-      <div id="history" class="mt-8">
-        <div class="bg-white rounded-lg shadow-md p-6">
-          <h2 class="text-2xl font-bold text-gray-800 mb-4">Your Previous Results</h2>
-          <div id="historyList" class="space-y-4">
-            <!-- History items will be loaded here -->
-            <div class="text-center py-8">
-              <div class="animate-pulse flex flex-col items-center">
-                <div class="w-10 h-10 bg-gray-300 rounded-full mb-2"></div>
-                <div class="h-4 bg-gray-300 rounded w-3/4 mb-2"></div>
-                <div class="h-4 bg-gray-300 rounded w-1/2"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
     </section>
     `;
   }
@@ -79,17 +62,9 @@ export default class DiabetesPageUser {
       form: document.getElementById("diabetesForm"),
       fileInput: document.getElementById("retinaImage"),
       resultContainer: document.getElementById("result"),
-      historyContainer: document.getElementById("historyList"),
       formCheckPage: document.getElementById("form-check-page"),
       retinaCheckPage: document.getElementById("retina-check-page"),
     };
-
-    // Load history on page load
-    try {
-      await this.#presenter.loadHistory();
-    } catch (error) {
-      this.displayHistoryError(error);
-    }
 
     await this.#loadLastResultFromIndexedDB();
 
@@ -142,7 +117,6 @@ export default class DiabetesPageUser {
     `;
   }
 
-  // Perbaiki method displayResults dengan parameter default
   displayResults(data, saveToIndexedDB = true) {
     this.#elements.resultContainer.classList.remove("hidden");
     this.#elements.resultContainer.innerHTML = `
@@ -202,7 +176,6 @@ export default class DiabetesPageUser {
     </div>
   `;
 
-    // Hanya simpan ke IndexedDB jika bukan dari hasil load
     if (saveToIndexedDB) {
       this.#saveResultToIndexedDB(data);
     }
@@ -217,13 +190,12 @@ export default class DiabetesPageUser {
     }
   }
 
-  // Saat load dari IndexedDB
   async #loadLastResultFromIndexedDB() {
     try {
       const results = await DiabetesDisplayResult.getAllResults();
       if (results.length > 0) {
         const lastResult = results.sort((a, b) => b.savedAt - a.savedAt)[0];
-        this.displayResults(lastResult, false); // Eksplisit false
+        this.displayResults(lastResult, false);
       }
     } catch (error) {
       console.error("Failed to load last result from IndexedDB:", error);
@@ -237,197 +209,6 @@ export default class DiabetesPageUser {
       <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4" role="alert">
         <p class="font-bold">Error</p>
         <p>Failed to analyze the retina image. Please try again later.</p>
-      </div>
-    `;
-  }
-
-  // diabetes-page.js
-  displayHistory(historyItems) {
-    if (historyItems.length === 0) {
-      this.#elements.historyContainer.innerHTML = `
-        <div class="text-center py-8 text-gray-500">
-          <p>No previous results found.</p>
-        </div>
-      `;
-      return;
-    }
-
-    // Pagination variables
-    const itemsPerPage = 5;
-    let currentPage = 1;
-    const totalPages = Math.ceil(historyItems.length / itemsPerPage);
-
-    // Function to display items for current page
-    const displayCurrentPage = () => {
-      const startIndex = (currentPage - 1) * itemsPerPage;
-      const endIndex = startIndex + itemsPerPage;
-      const paginatedItems = historyItems.slice(startIndex, endIndex);
-
-      this.#elements.historyContainer.innerHTML = `
-        ${paginatedItems
-          .map(
-            (item) => `
-          <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors mb-4">
-            <div class="flex flex-col md:flex-row gap-4">
-              <div class="flex-shrink-0">
-                <img src="${
-                  item.image
-                }" alt="Retina scan" class="w-32 h-32 object-cover rounded-lg border border-gray-200">
-              </div>
-              
-              <div class="flex-1">
-                <div class="flex justify-between items-start">
-                  <div>
-                    <h3 class="font-medium text-gray-800">
-                      ${new Date(item.createdAt).toLocaleDateString("id-ID", {
-                        day: "numeric",
-                        month: "long",
-                        year: "numeric",
-                      })}
-                    </h3>
-                    <p class="text-sm text-gray-500">
-                      ${new Date(item.createdAt).toLocaleTimeString("id-ID", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </p>
-                  </div>
-                  <span class="px-2 py-1 text-xs rounded-full ${
-                    item.predictedClass === "No_Dr"
-                      ? "bg-green-100 text-green-800"
-                      : "bg-red-100 text-red-800"
-                  }">
-                    ${
-                      item.predictedClass === "No_Dr"
-                        ? "Normal"
-                        : "Diabetic Retinopathy"
-                    }
-                  </span>
-                </div>
-                
-                <p class="text-sm text-gray-600 mt-1">
-                  Confidence: ${(item.confidenceClass * 100).toFixed(2)}%
-                </p>
-                <div class="w-full bg-gray-200 rounded-full h-2 mt-2">
-                  <div class="bg-blue-600 h-2 rounded-full" style="width: ${
-                    item.confidenceClass * 100
-                  }%"></div>
-                </div>
-                <p class="text-xs text-gray-500 mt-2">
-                  Saved: ${item.savedStatus ? "Yes" : "No"}
-                </p>
-              </div>
-              
-                <!-- Action Buttons Container -->
-                <div class="flex flex-col items-center justify-center gap-3 px-4 border-l border-gray-200">
-                  <button 
-                    class="delete-btn p-2 text-red-600 hover:bg-red-50 rounded-full transition-colors" 
-                    title="Delete"
-                    data-id="${item.id}"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                    </svg>
-                  </button>
-                </div>
-              </div>
-          </div>
-        `
-          )
-          .join("")}
-  
-        ${
-          totalPages > 1
-            ? `
-          <div class="flex justify-between items-center mt-6">
-            <button 
-              id="prevPage" 
-              class="px-4 py-2 bg-gray-200 rounded-lg ${
-                currentPage === 1
-                  ? "opacity-50 cursor-not-allowed"
-                  : "hover:bg-gray-300"
-              }"
-              ${currentPage === 1 ? "disabled" : ""}
-            >
-              Previous
-            </button>
-            <span class="text-sm text-gray-600">
-              Page ${currentPage} of ${totalPages}
-            </span>
-            <button 
-              id="nextPage" 
-              class="px-4 py-2 bg-gray-200 rounded-lg ${
-                currentPage === totalPages
-                  ? "opacity-50 cursor-not-allowed"
-                  : "hover:bg-gray-300"
-              }"
-              ${currentPage === totalPages ? "disabled" : ""}
-            >
-              Next
-            </button>
-          </div>
-        `
-            : ""
-        }
-      `;
-
-      // Add event listeners for pagination buttons
-      if (totalPages > 1) {
-        document.getElementById("prevPage")?.addEventListener("click", () => {
-          if (currentPage > 1) {
-            currentPage--;
-            displayCurrentPage();
-          }
-        });
-
-        document.getElementById("nextPage")?.addEventListener("click", () => {
-          if (currentPage < totalPages) {
-            currentPage++;
-            displayCurrentPage();
-          }
-        });
-      }
-
-      // Add event listeners for delete buttons
-      document.querySelectorAll(".delete-btn").forEach((button) => {
-        button.addEventListener("click", async (e) => {
-          e.stopPropagation();
-          const id = button.getAttribute("data-id");
-
-          if (confirm("Are you sure you want to delete this history item?")) {
-            try {
-              button.innerHTML = `
-              <div class="w-5 h-5 border-2 border-red-600 border-t-transparent rounded-full animate-spin"></div>
-            `;
-              button.disabled = true;
-
-              await this.#presenter.deleteHistoryItem(id);
-            } catch (error) {
-              alert("Failed to delete item. Please try again.");
-              // Reset button
-              button.innerHTML = `
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-              </svg>
-            `;
-              button.disabled = false;
-            }
-          }
-        });
-      });
-    };
-
-    // Initial display
-    displayCurrentPage();
-  }
-
-  displayHistoryError(error) {
-    this.#elements.historyContainer.innerHTML = `
-      <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4" role="alert">
-        <p class="font-bold">Error</p>
-        <p>Failed to load history. ${
-          error.message || "Please try again later."
-        }</p>
       </div>
     `;
   }

@@ -7,7 +7,6 @@ export default class DiabetesFormPageUser {
   #elements = {
     form: null,
     resultContainer: null,
-    historyContainer: null,
   };
 
   constructor() {
@@ -17,7 +16,6 @@ export default class DiabetesFormPageUser {
   async render() {
     return `
     <section class="container mx-auto px-4 py-8 max-w-3xl">
-
       <div class="flex gap-2 mb-2">
         <div id="form-check-page" class="border border-gray-300 rounded-md p-4 flex-1 flex justify-center items-center cursor-pointer hover:bg-gray-100 transition-colors">
             Form Check
@@ -26,9 +24,8 @@ export default class DiabetesFormPageUser {
         <div id="retina-check-page" class="border border-gray-300 rounded-md p-4 flex-1 flex justify-center items-center cursor-pointer hover:bg-gray-100 transition-colors">
             Check Retina
         </div>
-        </div>
+      </div>
       <div class="bg-white rounded-lg shadow-md p-6">
- 
         <h1 class="text-3xl font-bold text-gray-800 mb-6">Diabetes Risk Assessment</h1>
         <p class="text-gray-600 mb-6">Fill out the form to assess your risk of diabetes.</p>
         
@@ -101,22 +98,6 @@ export default class DiabetesFormPageUser {
       <div id="result" class="mt-6 hidden">
         <!-- Results will be displayed here -->
       </div>
-
-      <div id="history" class="mt-8">
-        <div class="bg-white rounded-lg shadow-md p-6">
-          <h2 class="text-2xl font-bold text-gray-800 mb-4">Your Previous Results</h2>
-          <div id="historyList" class="space-y-4">
-            <!-- History items will be loaded here -->
-            <div class="text-center py-8">
-              <div class="animate-pulse flex flex-col items-center">
-                <div class="w-10 h-10 bg-gray-300 rounded-full mb-2"></div>
-                <div class="h-4 bg-gray-300 rounded w-3/4 mb-2"></div>
-                <div class="h-4 bg-gray-300 rounded w-1/2"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
     </section>
     `;
   }
@@ -125,17 +106,9 @@ export default class DiabetesFormPageUser {
     this.#elements = {
       form: document.getElementById("diabetesForm"),
       resultContainer: document.getElementById("result"),
-      historyContainer: document.getElementById("historyList"),
       formCheckPage: document.getElementById("form-check-page"),
       retinaCheckPage: document.getElementById("retina-check-page"),
     };
-
-    // Load history on page load
-    try {
-      await this.#presenter.loadHistory();
-    } catch (error) {
-      this.displayHistoryError(error);
-    }
 
     await this.#loadLastResultFromIndexedDB();
 
@@ -325,249 +298,6 @@ export default class DiabetesFormPageUser {
         <p>${
           error.message ||
           "Failed to analyze the form data. Please try again later."
-        }</p>
-      </div>
-    `;
-  }
-
-  displayHistory(historyItems) {
-    if (!Array.isArray(historyItems) || historyItems.length === 0) {
-      this.#elements.historyContainer.innerHTML = `
-        <div class="text-center py-8 text-gray-500">
-          <p>No previous results found.</p>
-        </div>
-      `;
-      return;
-    }
-
-    // Sort by createdAt in descending order to show latest first
-    historyItems.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
-    // Pagination variables
-    const itemsPerPage = 5;
-    let currentPage = 1;
-    const totalPages = Math.ceil(historyItems.length / itemsPerPage);
-
-    // Function to display items for current page
-    const displayCurrentPage = () => {
-      const startIndex = (currentPage - 1) * itemsPerPage;
-      const endIndex = startIndex + itemsPerPage;
-      const paginatedItems = historyItems.slice(startIndex, endIndex);
-
-      this.#elements.historyContainer.innerHTML = `
-        ${paginatedItems
-          .map(
-            (item) => `
-          <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors mb-4">
-            <div class="flex justify-between items-start">
-              <div>
-                <h3 class="font-medium text-gray-800">
-                  ${new Date(item.createdAt).toLocaleDateString("id-ID", {
-                    day: "numeric",
-                    month: "long",
-                    year: "numeric",
-                  })}
-                </h3>
-                <p class="text-sm text-gray-500">
-                  ${new Date(item.createdAt).toLocaleTimeString("id-ID", {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
-                </p>
-              </div>
-              <span class="px-2 py-1 text-xs rounded-full ${
-                item.predictionResult === "positive"
-                  ? "bg-red-100 text-red-800"
-                  : "bg-green-100 text-green-800"
-              }">
-                ${
-                  item.predictionResult === "positive"
-                    ? "High Risk"
-                    : "Low Risk"
-                }
-              </span>
-            </div>
-            
-            <div class="mt-3 grid grid-cols-2 gap-2 text-sm">
-              <div>
-                <p class="text-gray-500">Gender</p>
-                <p class="capitalize">${item.gender || "N/A"}</p>
-              </div>
-              <div>
-                <p class="text-gray-500">Age</p>
-                <p>${item.age || "N/A"} years</p>
-              </div>
-              <div class="mt-2">
-                <p class="text-gray-500">BMI</p>
-                <p>${item.bmi}</p>
-              </div>
-              <div class="mt-2">
-                <p class="text-gray-500">Glucose</p>
-                <p>${item.bloodGlucoseLevel} mg/dL</p>
-              </div>
-              <div class="mt-2">
-                <p class="text-gray-500">HbA1c</p>
-                <p>${item.hba1cLevel}%</p>
-              </div>
-              <div class="mt-2">
-                <p class="text-gray-500">Smoking</p>
-                <p class="capitalize">${item.smokingHistory}</p>
-              </div>
-            </div>
-            
-            <div class="mt-3 grid grid-cols-2 gap-2 text-sm">
-              <div>
-                <p class="text-gray-500">Hypertension</p>
-                <p>${item.hypertension ? "Yes" : "No"}</p>
-              </div>
-              <div>
-                <p class="text-gray-500">Heart Disease</p>
-                <p>${item.heartDisease ? "Yes" : "No"}</p>
-              </div>
-            </div>
-            
-            <div class="mt-3 p-3 bg-gray-50 rounded">
-              <p class="text-sm text-gray-600">
-                ${
-                  item.predictionResult === "positive"
-                    ? "Based on your assessment, you have a higher risk of diabetes. Please consult with a healthcare professional."
-                    : "Based on your assessment, you have a lower risk of diabetes. Continue maintaining a healthy lifestyle."
-                }
-              </p>
-            </div>
-            
-            <div class="mt-3 flex justify-between items-center">
-              <div class="text-xs text-gray-400">
-                User: ${item.user.name}
-              </div>
-              <div class="flex gap-2">
-                <button 
-                  class="delete-btn p-2 text-red-600 hover:bg-red-50 rounded-full transition-colors" 
-                  title="Delete"
-                  data-id="${item.id}"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                  </svg>
-                </button>
-              </div>
-            </div>
-          </div>`
-          )
-          .join("")}
-
-        <div class="flex justify-between items-center mt-6">
-          <button 
-            id="prevPage" 
-            class="px-4 py-2 border rounded-md ${
-              currentPage === 1
-                ? "opacity-50 cursor-not-allowed"
-                : "hover:bg-gray-50"
-            }"
-            ${currentPage === 1 ? "disabled" : ""}
-          >
-            Previous
-          </button>
-          <span class="text-sm text-gray-600">
-            Page ${currentPage} of ${totalPages}
-          </span>
-          <button 
-            id="nextPage" 
-            class="px-4 py-2 border rounded-md ${
-              currentPage === totalPages
-                ? "opacity-50 cursor-not-allowed"
-                : "hover:bg-gray-50"
-            }"
-            ${currentPage === totalPages ? "disabled" : ""}
-          >
-            Next
-          </button>
-        </div>
-      `;
-
-      // Add event listeners for pagination buttons
-      if (totalPages > 1) {
-        document.getElementById("prevPage")?.addEventListener("click", () => {
-          if (currentPage > 1) {
-            currentPage--;
-            displayCurrentPage();
-          }
-        });
-
-        document.getElementById("nextPage")?.addEventListener("click", () => {
-          if (currentPage < totalPages) {
-            currentPage++;
-            displayCurrentPage();
-          }
-        });
-      }
-
-      // Add event listeners for delete buttons
-      document.querySelectorAll(".delete-btn").forEach((button) => {
-        button.addEventListener("click", async (e) => {
-          e.stopPropagation();
-          const id = button.getAttribute("data-id");
-
-          if (confirm("Are you sure you want to delete this history item?")) {
-            try {
-              button.innerHTML = `
-              <div class="w-4 h-4 border-2 border-red-600 border-t-transparent rounded-full animate-spin"></div>
-            `;
-              button.disabled = true;
-
-              await this.#presenter.deleteHistoryItem(id);
-
-              // Remove the item from historyItems array
-              const itemIndex = historyItems.findIndex(
-                (item) => item.id === id
-              );
-              if (itemIndex > -1) {
-                historyItems.splice(itemIndex, 1);
-              }
-
-              // Recalculate pagination after deletion
-              const newTotalPages = Math.ceil(
-                historyItems.length / itemsPerPage
-              );
-              if (currentPage > newTotalPages && newTotalPages > 0) {
-                currentPage = newTotalPages;
-              }
-
-              // Refresh display
-              if (historyItems.length === 0) {
-                this.#elements.historyContainer.innerHTML = `
-                  <div class="text-center py-8 text-gray-500">
-                    <p>No previous results found.</p>
-                  </div>
-                `;
-              } else {
-                displayCurrentPage();
-              }
-            } catch (error) {
-              alert("Failed to delete item. Please try again.");
-              // Reset button
-              button.innerHTML = `
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-              </svg>
-            `;
-              button.disabled = false;
-            }
-          }
-        });
-      });
-    };
-
-    // Initial display
-    displayCurrentPage();
-  }
-
-  displayHistoryError(error) {
-    this.#elements.historyContainer.innerHTML = `
-      <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4" role="alert">
-        <p class="font-bold">Error</p>
-        <p>Failed to load history. ${
-          error.message || "Please try again later."
         }</p>
       </div>
     `;
