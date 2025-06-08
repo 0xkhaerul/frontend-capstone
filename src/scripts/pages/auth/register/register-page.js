@@ -26,12 +26,7 @@ export default class RegisterPage {
           <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
             Buat Akun Baru
           </h2>
-          <p class="mt-2 text-center text-sm text-gray-600">
-            Sudah punya akun?
-            <a href="#/login" class="font-medium text-blue-600 hover:text-blue-500">
-              Login di sini
-            </a>
-          </p>
+          
         </div>
 
         <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
@@ -101,6 +96,12 @@ export default class RegisterPage {
                   <i class="fas fa-user-plus mr-2 mt-0.5"></i>Register
                 </button>
               </div>
+              <p class="mt-2 text-center text-sm text-gray-600">
+                Sudah punya akun?
+                <a href="#/login" class="font-medium text-blue-600 hover:text-blue-500">
+                  Login di sini
+                </a>
+              </p>
             </form>
           </div>
         </div>
@@ -165,7 +166,8 @@ export default class RegisterPage {
     }
   }
 
-  navigateToLogin() {
-    window.location.hash = "#/login";
+  // Tambahkan method navigateToOtp
+  navigateToOtp() {
+    window.location.hash = "#/verify-otp";
   }
 }

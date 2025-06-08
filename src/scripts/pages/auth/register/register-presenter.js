@@ -39,7 +39,8 @@ export default class RegisterPresenter {
         return;
       }
 
-      this.#handleRegistrationSuccess();
+      // Pass email to success handler
+      this.#handleRegistrationSuccess(formData.email);
     } catch (error) {
       this.#handleRegistrationError(error);
     }
@@ -75,11 +76,16 @@ export default class RegisterPresenter {
     return true;
   }
 
-  #handleRegistrationSuccess() {
-    this.#view.showSuccess("Registration successful! Redirecting to login...");
+  #handleRegistrationSuccess(email) {
+    // Simpan email ke localStorage untuk digunakan di halaman OTP
+    localStorage.setItem("userEmail", email);
+
+    this.#view.showSuccess(
+      "Registration successful! Please verify your email..."
+    );
 
     setTimeout(() => {
-      this.#view.navigateToLogin();
+      this.#view.navigateToOtp();
     }, 1500);
   }
 
