@@ -1,4 +1,3 @@
-// data/api.js
 import { getAccessToken } from "../utils/auth";
 import CONFIG from "../config";
 
@@ -6,6 +5,9 @@ const ENDPOINTS = {
   // Auth
   REGISTER: `${CONFIG.BASE_URL}/users`,
   LOGIN: `${CONFIG.BASE_URL}/login`,
+  VERIFY_OTP: `${CONFIG.BASE_URL}/verify-otp`,
+  RESEND_OTP: `${CONFIG.BASE_URL}/resend-otp`,
+  PROFILE: `${CONFIG.BASE_URL}/profile`,
 
   DIABETES_USER_HISTORY: `${CONFIG.BASE_URL}/retina-user`,
   DIABETES_USER_FORM_HISTORY: `${CONFIG.BASE_URL}/form-check-history`,
@@ -15,6 +17,96 @@ const ENDPOINTS = {
   DIABETES_FORM_PREDICTION: `${CONFIG.DIABETES_FORM_PREDICTION}/predict-history`,
 };
 
+export const verifyOtp = async (email, otpCode) => {
+  try {
+    const response = await fetch(ENDPOINTS.VERIFY_OTP, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email,
+        otpCode,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "OTP verification failed");
+    }
+
+    return {
+      success: true,
+      data: data,
+      message: data.message,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error.message,
+    };
+  }
+};
+
+export const resendOtp = async (email) => {
+  try {
+    const response = await fetch(ENDPOINTS.RESEND_OTP, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to resend OTP");
+    }
+
+    return {
+      success: true,
+      data: data,
+      message: data.message,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error.message,
+    };
+  }
+};
+
+export const getProfile = async () => {
+  try {
+    const token = getAccessToken();
+
+    if (!token) {
+      throw new Error("No access token found");
+    }
+
+    const response = await fetch(ENDPOINTS.PROFILE, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching profile:", error);
+    throw error;
+  }
+};
 export const getAllDiabetesUserFormHistory = async () => {
   const token = getAccessToken();
   if (!token) throw new Error("No access token available");

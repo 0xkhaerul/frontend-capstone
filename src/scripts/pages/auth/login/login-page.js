@@ -24,12 +24,7 @@ export default class LoginPage {
           <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
             Login ke Akun Anda
           </h2>
-          <p class="mt-2 text-center text-sm text-gray-600">
-            Atau
-            <a href="#/register" class="font-medium text-blue-600 hover:text-blue-500">
-              buat akun baru
-            </a>
-          </p>
+         
         </div>
 
         <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
@@ -63,30 +58,21 @@ export default class LoginPage {
                 </div>
               </div>
 
-              <div class="flex items-center justify-between">
-                <div class="flex items-center">
-                  <input id="remember_me" name="remember_me" type="checkbox"
-                        class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
-                  <label for="remember_me" class="ml-2 block text-sm text-gray-900">
-                    Ingat saya
-                  </label>
-                </div>
-
-                <div class="text-sm">
-                  <a href="#" class="font-medium text-blue-600 hover:text-blue-500">
-                    Lupa password?
-                  </a>
-                </div>
-              </div>
-              
+               
               <div id="errorMessage" class="text-red-600 text-sm text-center hidden py-2 px-4 bg-red-50 border border-red-200 rounded-md"></div>
-
+              
               <div>
                 <button type="submit"
                         class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                   <i class="fas fa-sign-in-alt mr-2 mt-0.5"></i>Login
                 </button>
               </div>
+              <p class="mt-2 text-center text-sm text-gray-600">
+                  Atau
+                  <a href="#/register" class="font-medium text-blue-600 hover:text-blue-500">
+                    buat akun baru
+                  </a>
+                </p>
             </form>
 
           </div>

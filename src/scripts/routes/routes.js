@@ -7,6 +7,7 @@ import LoginPage from "../pages/auth/login/login-page";
 import RegisterPage from "../pages/auth/register/register-page";
 import DiabetesPageUser from "../pages/diabetes_user_page/diabetes-user-page";
 import DiabetesFormPageUser from "../pages/diabetest_form_page/diabetes-user-form-page";
+import OtpPage from "../pages/auth/verify-otp/otp-page";
 import { checkAuth, checkUnauth } from "../utils/auth";
 
 const createProtectedRoute = (PageClass) => {
@@ -41,6 +42,7 @@ const routes = {
   "/riwayat": createProtectedRoute(RiwayatPage),
   "/login": createUnauthenticatedRoute(LoginPage),
   "/register": createUnauthenticatedRoute(RegisterPage),
+  "/verify-otp": createUnauthenticatedRoute(OtpPage),
 };
 
 export default routes;
