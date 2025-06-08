@@ -1,7 +1,8 @@
-// pages/app.js
 import routes from "../routes/routes";
 import { getActiveRoute, parseActivePathname } from "../routes/url-parser";
 import { isAuthenticated, removeAccessToken } from "../utils/auth";
+import { DiabetesDisplayResult, DiabetesFormDisplayResult } from "../utils/indexeddb.js";
+import { showNotification } from "../utils/notifications.js";
 
 class App {
   constructor({ content, drawerButton, navigationDrawer }) {
@@ -38,7 +39,9 @@ class App {
   _setupDrawer() {
     if (this.drawerButton) {
       this.drawerButton.addEventListener("click", (event) => {
-        this.navigationDrawer.classList.toggle("open");
+        if (this.navigationDrawer) {
+          this.navigationDrawer.classList.toggle("open");
+        }
         event.stopPropagation();
       });
     }
@@ -56,7 +59,6 @@ class App {
 
   _setupNavigation() {
     this._updateNavigation();
-
     window.addEventListener("hashchange", () => {
       this._updateNavigation();
     });
@@ -67,46 +69,88 @@ class App {
     const loginContainer = document.getElementById("login-container");
     const registerContainer = document.getElementById("register-container");
     const profileContainer = document.getElementById("profile-container");
-    const diabetesCheckedUserContainer = document.getElementById(
-      "diabetes-checked-user-container"
-    );
+    const diabetesCheckedUserContainer = document.getElementById("diabetes-checked-user-container");
+    
+    // Mobile nav items
+    const mobileLoginContainer = document.getElementById("mobile-login-container");
+    const mobileRegisterContainer = document.getElementById("mobile-register-container");
+    const mobileProfileSection = document.getElementById("mobile-profile-section");
+    const mobileDiabetesCheckLink = document.getElementById("mobile-diabetes-check-link");
+
+    const elements = [
+        loginContainer, registerContainer, profileContainer, diabetesCheckedUserContainer,
+        mobileLoginContainer, mobileRegisterContainer, mobileProfileSection, mobileDiabetesCheckLink
+    ];
+
+    if (!elements.every(el => el)) {
+        console.warn("One or more navigation elements are missing from the DOM.");
+    }
 
     if (isLoggedIn) {
-      // User is logged in - show profile
-
-      if (diabetesCheckedUserContainer)
-        diabetesCheckedUserContainer.style.display = "block";
+      if (diabetesCheckedUserContainer) diabetesCheckedUserContainer.style.display = "block";
       if (loginContainer) loginContainer.style.display = "none";
       if (registerContainer) registerContainer.style.display = "none";
       if (profileContainer) profileContainer.style.display = "block";
+      if (mobileLoginContainer) mobileLoginContainer.style.display = "none";
+      if (mobileRegisterContainer) mobileRegisterContainer.style.display = "none";
+      if (mobileProfileSection) mobileProfileSection.style.display = "block";
+      if (mobileDiabetesCheckLink) mobileDiabetesCheckLink.style.display = "block";
     } else {
-      // User is not logged in - show login and register
-      if (diabetesCheckedUserContainer)
-        diabetesCheckedUserContainer.style.display = "none";
+      if (diabetesCheckedUserContainer) diabetesCheckedUserContainer.style.display = "none";
       if (loginContainer) loginContainer.style.display = "block";
       if (registerContainer) registerContainer.style.display = "block";
       if (profileContainer) profileContainer.style.display = "none";
+      if (mobileLoginContainer) mobileLoginContainer.style.display = "block";
+      if (mobileRegisterContainer) mobileRegisterContainer.style.display = "block";
+      if (mobileProfileSection) mobileProfileSection.style.display = "none";
+      if (mobileDiabetesCheckLink) mobileDiabetesCheckLink.style.display = "none";
     }
   }
 
   _setupLogout() {
-    // Ganti dengan menangani logout dari dropdown
     const dropdownLogout = document.getElementById("dropdown-logout");
+    const mobileLogoutButton = document.getElementById("mobile-logout-button");
+
+    const handleLogoutEvent = async (event) => {
+        event.preventDefault();
+        await this._handleLogout();
+    };
 
     if (dropdownLogout) {
-      dropdownLogout.addEventListener("click", (event) => {
-        event.preventDefault();
-        this._handleLogout();
-      });
+      dropdownLogout.addEventListener("click", handleLogoutEvent);
+    }
+    if (mobileLogoutButton) {
+      mobileLogoutButton.addEventListener("click", handleLogoutEvent);
     }
   }
 
-  _handleLogout() {
+  async _handleLogout() {
     removeAccessToken();
+
+    try {
+      await DiabetesDisplayResult.clearAllResults();
+      await DiabetesFormDisplayResult.clearAllResults();
+    } catch (error) {
+      console.error("Error clearing IndexedDB on logout:", error);
+    }
+    
+    sessionStorage.setItem('showLogoutNotification', 'true');
+    
     window.location.hash = "#/login";
-    this._updateNavigation();
   }
 
+  _checkAndShowSessionNotifications() {
+    if (sessionStorage.getItem('showLoginNotification')) {
+      showNotification('Login successful! Welcome.', 'success');
+      sessionStorage.removeItem('showLoginNotification');
+    }
+    
+    if (sessionStorage.getItem('showLogoutNotification')) {
+      showNotification('You have successfully logged out.', 'info');
+      sessionStorage.removeItem('showLogoutNotification');
+    }
+  }
+  
   async renderPage() {
     const activeRoute = getActiveRoute();
     const routeConfig = routes[activeRoute];
@@ -119,21 +163,22 @@ class App {
     if (routeConfig.check && !routeConfig.check()) {
       return;
     }
-
+    
     try {
       const page = routeConfig.page;
       const urlParams = parseActivePathname();
 
-      if (document.startViewTransition) {
-        document.startViewTransition(async () => {
-          this.content.innerHTML = await page.render(urlParams);
-          await page.afterRender(urlParams);
-          this._updateNavigation();
-        });
-      } else {
+      const renderContent = async () => {
         this.content.innerHTML = await page.render(urlParams);
         await page.afterRender(urlParams);
         this._updateNavigation();
+        this._checkAndShowSessionNotifications();
+      };
+
+      if (document.startViewTransition) {
+        document.startViewTransition(renderContent);
+      } else {
+        await renderContent();
       }
     } catch (error) {
       console.error("Error rendering page:", error);

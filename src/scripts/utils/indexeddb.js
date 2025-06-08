@@ -1,4 +1,3 @@
-// Fungsi pembuat (factory) untuk membuat instance IndexedDB
 function createIndexedDBHandler(dbName, version, storeName) {
   return {
     dbName,
@@ -32,8 +31,8 @@ function createIndexedDBHandler(dbName, version, storeName) {
 
       const resultData = {
         ...data,
-        timestamp: new Date().toISOString(),
-        savedAt: Date.now(),
+        timestamp: data.timestamp || new Date().toISOString(), // Pastikan timestamp ada
+        savedAt: Date.now(), // Timestamp untuk pengurutan lokal
       };
 
       return new Promise((resolve, reject) => {
@@ -54,18 +53,37 @@ function createIndexedDBHandler(dbName, version, storeName) {
         request.onerror = () => reject(request.error);
       });
     },
+
+    // --- TAMBAHKAN FUNGSI INI ---
+    async clearAllResults() {
+      const db = await this.initDB();
+      const transaction = db.transaction([this.storeName], "readwrite");
+      const store = transaction.objectStore(this.storeName);
+      return new Promise((resolve, reject) => {
+        const request = store.clear(); // Menghapus semua data di object store
+        request.onsuccess = () => {
+          console.log(`All data cleared from ${this.storeName}`);
+          resolve();
+        };
+        request.onerror = () => {
+          console.error(`Error clearing data from ${this.storeName}:`, request.error);
+          reject(request.error);
+        };
+      });
+    },
+    // --- AKHIR TAMBAHAN ---
   };
 }
 
 // Buat instance untuk masing-masing database
 export const DiabetesDisplayResult = createIndexedDBHandler(
-  "DiabetesResults",
+  "DiabetesResults", // Untuk hasil cek retina
   1,
   "results"
 );
 
 export const DiabetesFormDisplayResult = createIndexedDBHandler(
-  "DiabetesFormResults",
+  "DiabetesFormResults", // Untuk hasil cek form
   1,
   "resultsForms"
 );

@@ -3,6 +3,8 @@ import {
   getAllDiabetesUserFormHistory,
   deleteDiabatesUserFormHistory,
 } from "../../data/api.js";
+// Impor fungsi notifikasi
+import { showNotification } from "../../utils/notifications.js";
 
 export default class DiabetesFormPresenterUser {
   #view;
@@ -15,11 +17,15 @@ export default class DiabetesFormPresenterUser {
     this.#view.showLoading();
 
     try {
-      const data = await predictDiabetesFormAsUser(formData);
+      const data = await predictDiabetesFormAsUser(formData); //
       this.#view.displayResults(data);
       await this.loadHistory();
+      // Tampilkan notifikasi sukses
+      showNotification('Form check completed and result saved.', 'success');
     } catch (error) {
       this.#view.displayError(error);
+      // Tampilkan notifikasi error
+      showNotification(`Error: ${error.message || 'Failed to submit form.'}`, 'error');
     }
   }
 

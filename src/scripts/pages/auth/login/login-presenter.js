@@ -1,5 +1,6 @@
 import { login } from "../../../data/api.js";
 import { putAccessToken } from "../../../utils/auth.js";
+import { showNotification } from "../../../utils/notifications.js";
 
 export default class LoginPresenter {
   #view;
@@ -15,21 +16,17 @@ export default class LoginPresenter {
       this.#view.clearError();
       const formData = this.#view.getFormData();
 
-      // Validate form data
       if (!this.#validateFormData(formData)) {
         return;
       }
 
-      // Show loading state
       this.#view.setLoading(true);
 
-      // Call the login API
       const result = await this.#authService.login({
         email: formData.email,
         password: formData.password,
       });
 
-      // Hide loading state
       this.#view.setLoading(false);
 
       if (result.error) {
@@ -61,8 +58,14 @@ export default class LoginPresenter {
   }
 
   #handleLoginSuccess(data) {
-    this.#authService.putAccessToken(data.loginResult.token);
-    this.#view.navigateTo("/");
+    this.#authService.putAccessToken(data.loginResult.token); //
+    // Tampilkan notifikasi
+    showNotification('Login successful! Welcome.', 'success');
+    
+    // Beri jeda sedikit agar notifikasi terlihat sebelum pindah halaman
+    setTimeout(() => {
+        this.#view.navigateTo("/");
+    }, 1500);
   }
 
   #handleLoginError(error) {
