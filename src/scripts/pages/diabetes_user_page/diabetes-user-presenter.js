@@ -4,6 +4,8 @@ import {
   getAllDiabetesUserHistory,
   deleteDiabatesUserHistory,
 } from "../../data/api.js";
+// Impor fungsi notifikasi
+import { showNotification } from "../../utils/notifications.js";
 
 export default class DiabetesPresenterUser {
   #view;
@@ -16,12 +18,15 @@ export default class DiabetesPresenterUser {
     this.#view.showLoading();
 
     try {
-      const data = await predictDiabetesAsUser(file);
+      const data = await predictDiabetesAsUser(file); //
       this.#view.displayResults(data);
-      // Refresh history after new prediction
       await this.loadHistory();
+      // Tampilkan notifikasi sukses
+      showNotification('Retina check completed and result saved.', 'success');
     } catch (error) {
       this.#view.displayError(error);
+      // Tampilkan notifikasi error
+      showNotification(`Error: ${error.message || 'Failed to check retina.'}`, 'error');
     }
   }
 

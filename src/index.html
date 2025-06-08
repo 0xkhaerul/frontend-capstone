@@ -198,13 +198,21 @@
             <ul class="space-y-2">
               <li>
                 <a
-                  href="#/diabetes-checked"
+                  href="#/"
                   class="block px-3 py-2 rounded-md text-gray-800 hover:bg-blue-50 hover:text-blue-600 transition-colors"
                 >
-                  Check diabetes
+                  Beranda
                 </a>
               </li>
-              <li>
+              <li id="mobile-diabetes-check-link" style="display: none;">
+                <a
+                  href="#/diabetes-checked-user"
+                  class="block px-3 py-2 rounded-md text-gray-800 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                >
+                  Check Diabetes
+                </a>
+              </li>
+               <li>
                 <a
                   href="#/panduan-check"
                   class="block px-3 py-2 rounded-md text-gray-800 hover:bg-blue-50 hover:text-blue-600 transition-colors"
@@ -220,6 +228,7 @@
                   Bacaan
                 </a>
               </li>
+              
               <li id="mobile-login-container" class="pt-2">
                 <a
                   href="#/login"
@@ -234,6 +243,22 @@
                   class="block px-3 py-2 rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors text-center"
                 >
                   REGISTER
+                </a>
+              </li>
+
+              <li id="mobile-profile-section" style="display: none;" class="pt-2 border-t mt-2">
+                 <a
+                  href="#/profile"
+                  class="block px-3 py-2 rounded-md text-gray-800 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                >
+                  Profile Saya
+                </a>
+                <a
+                  href="#"
+                  id="mobile-logout-button"
+                  class="block px-3 py-2 rounded-md text-red-600 hover:bg-red-50 transition-colors"
+                >
+                  Logout
                 </a>
               </li>
             </ul>

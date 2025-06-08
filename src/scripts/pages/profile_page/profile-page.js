@@ -1,50 +1,13 @@
-// profile-page.js
-import ProfilePresenter from "./profile-presenter.js";
+import profileData from "./data.js";
 
 export default class ProfilePage {
-  #presenter;
-  #elements = {
-    loadingSpinner: null,
-    errorMessage: null,
-    errorText: null,
-    retryBtn: null,
-    profileInfo: null,
-    headerName: null,
-    headerEmail: null,
-    userName: null,
-    userEmail: null,
-    userId: null,
-    userCreated: null,
-    userUpdated: null,
-  };
-
-  constructor() {
-    this.#presenter = new ProfilePresenter(this);
-  }
-
   async render() {
     return `
-      <div class="max-w-2xl mx-auto p-6">   
-        <!-- Content Container -->
-        <div id="profile-content">
-          <!-- Loading State -->
-          <div class="loading flex flex-col items-center justify-center py-12" id="loading-spinner">
-            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mb-4"></div>
-            <p class="text-gray-600">Loading profile...</p>
-          </div>
-          
-          <!-- Error State -->
-          <div class="error hidden" id="error-message">
-            <div class="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
-              <div class="flex justify-center mb-4">
-                <svg class="w-12 h-12 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
-                </svg>
-              </div>
-              <p class="text-red-800 font-medium mb-4" id="error-text">Something went wrong</p>
-              <button id="retry-btn" class="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200">
-                Try Again
-              </button>
+      <section class="container mx-auto p-4">
+        <div class="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl">
+          <div class="md:flex">
+            <div class="md:shrink-0">
+              <img class="h-48 w-full object-cover md:h-full md:w-48" src="${profileData.avatar}" alt="Profile picture">
             </div>
           </div>
           
@@ -114,108 +77,11 @@ export default class ProfilePage {
             </div>
           </div>
         </div>
-      </div>
+      </section>
     `;
   }
 
   async afterRender() {
-    this.#initializeElements();
-    this.#bindEvents();
-    await this.#presenter.init();
-  }
-
-  #initializeElements() {
-    this.#elements.loadingSpinner = document.getElementById("loading-spinner");
-    this.#elements.errorMessage = document.getElementById("error-message");
-    this.#elements.errorText = document.getElementById("error-text");
-    this.#elements.retryBtn = document.getElementById("retry-btn");
-    this.#elements.profileInfo = document.getElementById("profile-info");
-    this.#elements.headerName = document.getElementById("header-name");
-    this.#elements.headerEmail = document.getElementById("header-email");
-    this.#elements.userName = document.getElementById("user-name");
-    this.#elements.userEmail = document.getElementById("user-email");
-    this.#elements.userId = document.getElementById("user-id");
-    this.#elements.userCreated = document.getElementById("user-created");
-    this.#elements.userUpdated = document.getElementById("user-updated");
-  }
-
-  #bindEvents() {
-    if (this.#elements.retryBtn) {
-      this.#elements.retryBtn.addEventListener("click", () => {
-        this.#presenter.handleRetry();
-      });
-    }
-  }
-
-  showLoading() {
-    this.#hideAll();
-    this.#elements.loadingSpinner?.classList.remove("hidden");
-  }
-
-  showError(errorMessage) {
-    this.#hideAll();
-    if (this.#elements.errorText) {
-      this.#elements.errorText.textContent = errorMessage;
-    }
-    this.#elements.errorMessage?.classList.remove("hidden");
-  }
-
-  showProfile(user) {
-    this.#hideAll();
-
-    if (user) {
-      // Update header
-      if (this.#elements.headerName) {
-        this.#elements.headerName.textContent = user.name || "Unknown User";
-      }
-      if (this.#elements.headerEmail) {
-        this.#elements.headerEmail.textContent =
-          user.email || "No email provided";
-      }
-
-      // Update profile fields
-      if (this.#elements.userName) {
-        this.#elements.userName.textContent = user.name || "N/A";
-      }
-      if (this.#elements.userEmail) {
-        this.#elements.userEmail.textContent = user.email || "N/A";
-      }
-      if (this.#elements.userId) {
-        this.#elements.userId.textContent = user.id || "N/A";
-      }
-
-      // Format dates
-      if (this.#elements.userCreated) {
-        const createdDate = user.createdAt
-          ? new Date(user.createdAt).toLocaleDateString("id-ID", {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })
-          : "N/A";
-        this.#elements.userCreated.textContent = createdDate;
-      }
-
-      if (this.#elements.userUpdated) {
-        const updatedDate = user.updatedAt
-          ? new Date(user.updatedAt).toLocaleDateString("id-ID", {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-              hour: "2-digit",
-              minute: "2-digit",
-            })
-          : "N/A";
-        this.#elements.userUpdated.textContent = updatedDate;
-      }
-    }
-
-    this.#elements.profileInfo?.classList.remove("hidden");
-  }
-
-  #hideAll() {
-    this.#elements.loadingSpinner?.classList.add("hidden");
-    this.#elements.errorMessage?.classList.add("hidden");
-    this.#elements.profileInfo?.classList.add("hidden");
+    // Do your job here
   }
 }
