@@ -24,11 +24,10 @@ const createUnauthenticatedRoute = (PageClass) => {
   };
 };
 
-// Membuat rute yang bisa diakses semua pengguna (tanpa check autentikasi)
 const createPublicRoute = (PageClass) => {
   return {
     page: new PageClass(),
-    check: () => true, // Selalu mengembalikan true, mengizinkan akses untuk semua pengguna
+    check: () => true,
   };
 };
 

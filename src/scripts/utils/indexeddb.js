@@ -1,4 +1,3 @@
-// Fungsi pembuat (factory) untuk membuat instance IndexedDB
 function createIndexedDBHandler(dbName, version, storeName) {
   return {
     dbName,

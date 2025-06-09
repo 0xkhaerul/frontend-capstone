@@ -34,7 +34,7 @@ export default class OtpPage {
 
     return `
       <div class="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8" 
-           style="background-image: url('/assets/images/background-image3.jpg'); background-size: cover; background-position: center;">
+           style="background-image: url('/assets/images/background-image.png'); background-size: cover; background-position: center;">
         <div class="sm:mx-auto sm:w-full sm:max-w-md">
           <div class="bg-white py-8 px-4 shadow-xl rounded-lg sm:px-10">
             

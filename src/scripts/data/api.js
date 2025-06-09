@@ -198,7 +198,6 @@ export const predictDiabetesAsUser = async (file) => {
   return await response.json();
 };
 
-// data/api.js
 export const deleteDiabatesUserHistory = async (id) => {
   const token = getAccessToken();
   const response = await fetch(`${ENDPOINTS.DIABETES_USER_HISTORY}/${id}`, {

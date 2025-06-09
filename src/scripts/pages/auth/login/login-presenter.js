@@ -62,7 +62,7 @@ export default class LoginPresenter {
 
   #handleLoginSuccess(data) {
     this.#authService.putAccessToken(data.loginResult.token);
-    this.#view.navigateTo("/");
+    this.#view.navigateTo("#/diabetes-checked-user");
   }
 
   #handleLoginError(error) {

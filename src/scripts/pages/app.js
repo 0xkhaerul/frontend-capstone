@@ -64,6 +64,8 @@ class App {
 
   _updateNavigation() {
     const isLoggedIn = isAuthenticated();
+
+    // Desktop elements
     const loginContainer = document.getElementById("login-container");
     const registerContainer = document.getElementById("register-container");
     const profileContainer = document.getElementById("profile-container");
@@ -71,30 +73,75 @@ class App {
       "diabetes-checked-user-container"
     );
 
-    if (isLoggedIn) {
-      // User is logged in - show profile
+    // Mobile elements
+    const mobileLoginContainer = document.getElementById(
+      "mobile-login-container"
+    );
+    const mobileRegisterContainer = document.getElementById(
+      "mobile-register-container"
+    );
+    const mobileProfileContainer = document.getElementById(
+      "mobile-profile-container"
+    );
+    const mobileLogoutContainer = document.getElementById(
+      "mobile-logout-container"
+    );
+    const mobileDiabetesCheckedUserContainer = document.getElementById(
+      "mobile-diabetes-checked-user-container"
+    );
 
+    if (isLoggedIn) {
+      // Desktop - User is logged in
       if (diabetesCheckedUserContainer)
         diabetesCheckedUserContainer.style.display = "block";
       if (loginContainer) loginContainer.style.display = "none";
       if (registerContainer) registerContainer.style.display = "none";
-      if (profileContainer) profileContainer.style.display = "block";
+      if (profileContainer) profileContainer.classList.remove("hidden");
+
+      // Mobile - User is logged in
+      if (mobileDiabetesCheckedUserContainer)
+        mobileDiabetesCheckedUserContainer.style.display = "block";
+      if (mobileLoginContainer) mobileLoginContainer.style.display = "none";
+      if (mobileRegisterContainer)
+        mobileRegisterContainer.style.display = "none";
+      if (mobileProfileContainer)
+        mobileProfileContainer.classList.remove("hidden");
+      if (mobileLogoutContainer)
+        mobileLogoutContainer.classList.remove("hidden");
     } else {
-      // User is not logged in - show login and register
+      // Desktop - User is not logged in
       if (diabetesCheckedUserContainer)
         diabetesCheckedUserContainer.style.display = "none";
       if (loginContainer) loginContainer.style.display = "block";
       if (registerContainer) registerContainer.style.display = "block";
-      if (profileContainer) profileContainer.style.display = "none";
+      if (profileContainer) profileContainer.classList.add("hidden");
+
+      // Mobile - User is not logged in
+      if (mobileDiabetesCheckedUserContainer)
+        mobileDiabetesCheckedUserContainer.style.display = "none";
+      if (mobileLoginContainer) mobileLoginContainer.style.display = "block";
+      if (mobileRegisterContainer)
+        mobileRegisterContainer.style.display = "block";
+      if (mobileProfileContainer)
+        mobileProfileContainer.classList.add("hidden");
+      if (mobileLogoutContainer) mobileLogoutContainer.classList.add("hidden");
     }
   }
 
   _setupLogout() {
-    // Ganti dengan menangani logout dari dropdown
+    // Desktop logout
     const dropdownLogout = document.getElementById("dropdown-logout");
-
     if (dropdownLogout) {
       dropdownLogout.addEventListener("click", (event) => {
+        event.preventDefault();
+        this._handleLogout();
+      });
+    }
+
+    // Mobile logout
+    const mobileLogout = document.getElementById("mobile-logout");
+    if (mobileLogout) {
+      mobileLogout.addEventListener("click", (event) => {
         event.preventDefault();
         this._handleLogout();
       });
@@ -112,7 +159,21 @@ class App {
     const routeConfig = routes[activeRoute];
 
     if (!routeConfig) {
-      this.content.innerHTML = "<p>Page not found</p>";
+      this.content.innerHTML = `<div class="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-indigo-50 to-blue-100 p-4 text-center">
+      <div class="max-w-md w-full bg-white rounded-xl shadow-lg p-8 space-y-6 animate-fade-in">
+        <div class="text-9xl font-bold text-indigo-600">404</div>
+        <h1 class="text-3xl font-bold text-gray-800">Oops! Page Not Found</h1>
+        <p class="text-gray-600">
+          The page you're looking for doesn't exist or has been moved.
+        </p>
+        <div class="pt-4">
+          <a href="/" class="inline-block px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition duration-300">
+            Go Back Home
+          </a>
+        </div>
+      </div>
+    </div>
+  `;
       return;
     }
 

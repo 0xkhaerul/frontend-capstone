@@ -18,7 +18,7 @@ export default class RegisterPage {
 
   async render() {
     return `
-     <div class="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8" style="background-image: url('/assets/images/background-image3.jpg'); background-size: cover; background-position: center;">
+     <div class="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8" style="background-image: url('/assets/images/background-image3.png'); background-size: cover; background-position: center;">
         <div class="sm:mx-auto sm:w-full sm:max-w-md text-center">
           <div class="flex items-center justify-center mx-auto mb-4 text-blue-600">
               <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>

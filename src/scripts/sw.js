@@ -92,19 +92,6 @@ if (workbox) {
       });
     }
 
-    if (event.request.url.includes("/stories")) {
-      return new Response(
-        JSON.stringify({
-          error: true,
-          message: "You're offline. The app will try to use cached data.",
-        }),
-        {
-          headers: { "Content-Type": "application/json" },
-          status: 503,
-        }
-      );
-    }
-
     return Response.error();
   });
 
@@ -112,43 +99,6 @@ if (workbox) {
     if (event.data && event.data.action === "skipWaiting") {
       self.skipWaiting();
     }
-  });
-
-  self.addEventListener("push", (event) => {
-    let notificationData = {};
-
-    try {
-      notificationData = event.data.json();
-    } catch (error) {
-      notificationData = {
-        title: "Story App Notification",
-        options: {
-          body: event.data ? event.data.text() : "New notification",
-        },
-      };
-    }
-
-    const title = notificationData.title || "Story berhasil dibuat";
-    const options = notificationData.options || {
-      body: "Anda telah membuat story baru",
-      icon: "/images/icon-192x192.png",
-      badge: "/images/icon-72x72.png",
-    };
-
-    event.waitUntil(self.registration.showNotification(title, options));
-  });
-
-  self.addEventListener("notificationclick", (event) => {
-    event.notification.close();
-
-    event.waitUntil(
-      clients.matchAll({ type: "window" }).then((clientList) => {
-        if (clientList.length > 0) {
-          return clientList[0].focus();
-        }
-        return clients.openWindow("/");
-      })
-    );
   });
 } else {
   console.warn("[Workbox] Not loaded. Offline support not available.");
