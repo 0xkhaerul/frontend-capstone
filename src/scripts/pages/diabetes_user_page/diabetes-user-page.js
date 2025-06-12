@@ -119,62 +119,154 @@ export default class DiabetesPageUser {
 
   displayResults(data, saveToIndexedDB = true) {
     this.#elements.resultContainer.classList.remove("hidden");
-    this.#elements.resultContainer.innerHTML = `
-    <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
-      <h2 class="text-2xl font-bold text-gray-800">Analysis Results</h2>
-      
-      <div class="flex flex-col md:flex-row gap-6">
-        <div class="flex-1">
-          <h3 class="text-lg font-medium text-gray-700 mb-2">Retina Image</h3>
-          <img src="${
-            data.image.url
-          }" alt="Analyzed retina" class="w-full h-auto rounded-lg border border-gray-200">
-        </div>
+
+    // Generate diabetes resources section if DR is detected
+    const diabetesResourcesSection =
+      data.prediction.class !== "No_Dr"
+        ? `
+      <div class="mt-6 bg-red-50 rounded-lg p-6 border border-red-200">
+        <h4 class="text-lg font-semibold text-red-800 mb-4 flex items-center">
+          <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+          </svg>
+          Informasi Penting tentang Diabetes
+        </h4>
         
-        <div class="flex-1">
-          <h3 class="text-lg font-medium text-gray-700 mb-2">Diagnosis</h3>
-          <div class="space-y-3">
-            <div>
-              <p class="text-sm text-gray-500">Condition</p>
-              <p class="text-lg font-semibold ${
-                data.prediction.class === "No_Dr"
-                  ? "text-green-600"
-                  : "text-red-600"
-              }">
-                ${
-                  data.prediction.class === "No_Dr"
-                    ? "No Diabetic Retinopathy Detected"
-                    : "Diabetic Retinopathy Detected"
-                }
-              </p>
-            </div>
-            
-            <div>
-              <p class="text-sm text-gray-500">Confidence Level</p>
-              <p class="text-lg font-semibold text-gray-800">
-                ${(data.prediction.confidence * 100).toFixed(2)}%
-              </p>
-              <div class="w-full bg-gray-200 rounded-full h-2.5 mt-1">
-                <div class="bg-blue-600 h-2.5 rounded-full" style="width: ${
-                  data.prediction.confidence * 100
-                }%"></div>
-              </div>
-            </div>
+        <div class="space-y-4">
+          <div>
+            <h5 class="font-medium text-red-700 mb-2">📚 Panduan Pengelolaan Diabetes:</h5>
+            <ul class="space-y-1 text-sm">
+              <li><a href="https://www.alodokter.com/diabetes" target="_blank" class="text-blue-600 hover:text-blue-800 underline">Panduan Lengkap Diabetes - Alodokter</a></li>
+              <li><a href="https://www.halodoc.com/kesehatan/diabetes" target="_blank" class="text-blue-600 hover:text-blue-800 underline">Informasi Diabetes Lengkap - Halodoc</a></li>
+            </ul>
           </div>
           
-          <div class="mt-6 p-4 bg-blue-50 rounded-lg">
-            <p class="text-sm text-blue-800">
-              ${
-                data.prediction.class === "No_Dr"
-                  ? "No signs of diabetic retinopathy were detected in your retina image. However, regular check-ups are still recommended."
-                  : "Potential signs of diabetic retinopathy were detected. Please consult with an ophthalmologist for further evaluation."
-              }
+          <div>
+            <h5 class="font-medium text-red-700 mb-2">⚠️ Bahaya dan Komplikasi Diabetes:</h5>
+            <ul class="space-y-1 text-sm">
+             
+              <li><a href="https://hellosehat.com/diabetes/komplikasi-diabetes/" target="_blank" class="text-blue-600 hover:text-blue-800 underline">Bahaya Komplikasi Diabetes - Hello Sehat</a></li>
+             
+            </ul>
+          </div>
+          
+          <div>
+            <h5 class="font-medium text-red-700 mb-2">🔍 Penyebab dan Faktor Risiko Diabetes:</h5>
+            <ul class="space-y-1 text-sm">
+            
+              <li><a href="https://hellosehat.com/diabetes/diabetes-tipe-1/penyebab-diabetes/" target="_blank" class="text-blue-600 hover:text-blue-800 underline">Penyebab dan Faktor Risiko Diabetes - Hello Sehat</a></li>
+        
+             
+            </ul>
+          </div>
+          
+          <div>
+            <h5 class="font-medium text-red-700 mb-2">👁️ Retinopati Diabetik:</h5>
+            <ul class="space-y-1 text-sm">
+              <li><a href="https://www.alodokter.com/retinopati-diabetik" target="_blank" class="text-blue-600 hover:text-blue-800 underline">Retinopati Diabetik - Alodokter</a></li>
+              <li><a href="https://hellosehat.com/diabetes/komplikasi-diabetes/retinopati-diabetik/" target="_blank" class="text-blue-600 hover:text-blue-800 underline">Retinopati Diabetik: Gejala dan Pengobatan - Hello Sehat</a></li>
+            </ul>
+          </div>
+          
+          <div class="mt-4 p-3 bg-yellow-100 border border-yellow-300 rounded">
+            <p class="text-sm text-yellow-800 font-medium">
+              💡 <strong>Penting:</strong> Informasi di atas hanya sebagai referensi. Selalu konsultasikan dengan dokter spesialis mata dan dokter spesialis penyakit dalam untuk diagnosis dan pengobatan yang tepat.
             </p>
           </div>
         </div>
       </div>
+    `
+        : `
+         <div class="mt-6 bg-green-50 rounded-lg p-6 border border-green-200">
+      <h4 class="text-lg font-semibold text-green-800 mb-4 flex items-center">
+        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" clip-rule="evenodd"></path>
+        </svg>
+        Jaga Kesehatan Mata & Cegah Diabetes
+      </h4>
+      
+      <div class="space-y-4">
+        <div>
+          <h5 class="font-medium text-green-700 mb-2">🥗 Pola Makan Sehat untuk Mencegah Diabetes:</h5>
+          <ul class="space-y-1 text-sm">
+            <li><a href="https://www.siloamhospitals.com/informasi-siloam/artikel/makanan-penyebab-diabetes" target="_blank" class="text-blue-600 hover:text-blue-800 underline">Makanan Penyebab Diabetes - Hello Sehat</a></li>
+            <li><a href="https://www.klikdokter.com/info-sehat/diabetes/gaya-hidup-ini-bisa-tingkatkan-risiko-diabetes" target="_blank" class="text-blue-600 hover:text-blue-800 underline">Gaya Hidup Ini Bisa Tingkatkan Risiko Diabetes</a></li>
+          </ul>
+        </div>
+        
+        <div class="mt-4 p-3 bg-blue-100 border border-blue-300 rounded">
+          <p class="text-sm text-blue-800 font-medium">
+            ✨ <strong>Tetap Waspada:</strong> Meskipun hasil menunjukkan tidak ada tanda retinopati diabetik, penting untuk tetap menjaga gaya hidup sehat dan melakukan pemeriksaan mata rutin setiap 1-2 tahun untuk deteksi dini.
+          </p>
+        </div>
+      </div>
     </div>
-  `;
+        `;
+
+    this.#elements.resultContainer.innerHTML = `
+      <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
+        <h2 class="text-2xl font-bold text-gray-800">Analysis Results</h2>
+         
+        <div class="flex flex-col md:flex-row gap-6">
+          <div class="flex-1">
+            <h3 class="text-lg font-medium text-gray-700 mb-2">Retina Image</h3>
+            <img src="${
+              data.image.url
+            }" alt="Analyzed retina" class="w-full h-auto rounded-lg border border-gray-200">
+          </div>
+           
+          <div class="flex-1">
+            <h3 class="text-lg font-medium text-gray-700 mb-2">Diagnosis</h3>
+            <div class="space-y-3">
+              <div>
+                <p class="text-sm text-gray-500">Condition</p>
+                <p class="text-lg font-semibold ${
+                  data.prediction.class === "No_Dr"
+                    ? "text-green-600"
+                    : "text-red-600"
+                }">
+                  ${
+                    data.prediction.class === "No_Dr"
+                      ? "No Diabetic Retinopathy Detected"
+                      : "Diabetic Retinopathy Detected"
+                  }
+                </p>
+              </div>
+               
+              <div>
+                <p class="text-sm text-gray-500">Confidence Level</p>
+                <p class="text-lg font-semibold text-gray-800">
+                  ${(data.prediction.confidence * 100).toFixed(2)}%
+                </p>
+                <div class="w-full bg-gray-200 rounded-full h-2.5 mt-1">
+                  <div class="bg-blue-600 h-2.5 rounded-full" style="width: ${
+                    data.prediction.confidence * 100
+                  }%"></div>
+                </div>
+              </div>
+            </div>
+             
+            <div class="mt-6 p-4 ${
+              data.prediction.class === "No_Dr" ? "bg-blue-50" : "bg-red-50"
+            } rounded-lg">
+              <p class="text-sm ${
+                data.prediction.class === "No_Dr"
+                  ? "text-blue-800"
+                  : "text-red-800"
+              }">
+                ${
+                  data.prediction.class === "No_Dr"
+                    ? "No signs of diabetic retinopathy were detected in your retina image. However, regular check-ups are still recommended."
+                    : "Potential signs of diabetic retinopathy were detected. Please consult with an ophthalmologist for further evaluation and consider the diabetes management resources below."
+                }
+              </p>
+            </div>
+          </div>
+        </div>
+        
+        ${diabetesResourcesSection}
+      </div>
+    `;
 
     if (saveToIndexedDB) {
       this.#saveResultToIndexedDB(data);

@@ -455,23 +455,26 @@ export default class ProfilePage {
   }
 
   #changePage(direction) {
-    if (this.activeTab === "retina") {
+    if (this.#activeTab === "retina") {
+      // Fixed: Use #activeTab
       const totalPages = Math.ceil(
-        this.retinaHistory.length / this.itemsPerPage
+        this.#retinaHistory.length / this.#itemsPerPage // Fixed: Use #retinaHistory
       );
-      const newPage = this.retinaCurrentPage + direction;
+      const newPage = this.#retinaCurrentPage + direction;
       if (newPage >= 1 && newPage <= totalPages) {
-        this.retinaCurrentPage = newPage;
+        this.#retinaCurrentPage = newPage;
       }
     } else {
-      const totalPages = Math.ceil(this.formHistory.length / this.itemsPerPage);
-      const newPage = this.formCurrentPage + direction;
+      const totalPages = Math.ceil(
+        this.#formHistory.length / this.#itemsPerPage // Fixed: Use #formHistory
+      );
+      const newPage = this.#formCurrentPage + direction;
       if (newPage >= 1 && newPage <= totalPages) {
-        this.formCurrentPage = newPage;
+        this.#formCurrentPage = newPage;
       }
     }
 
-    this.renderCurrentPageItems();
+    this.#renderCurrentPageItems(); // Fixed: Use #renderCurrentPageItems
   }
 
   #createRetinaItemElement(checkDataFromApi) {

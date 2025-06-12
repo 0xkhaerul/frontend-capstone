@@ -151,6 +151,85 @@ export default class DiabetesFormPageUser {
 
   displayResults(data, saveToIndexedDB = true) {
     this.#elements.resultContainer.classList.remove("hidden");
+
+    // Generate diabetes resources section if DR is detected
+    const diabetesResourcesSection =
+      data.prediction.class !== "No_Dr"
+        ? `
+      <div class="mt-6 bg-red-50 rounded-lg p-6 border border-red-200">
+        <h4 class="text-lg font-semibold text-red-800 mb-4 flex items-center">
+          <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+          </svg>
+          Informasi Penting tentang Diabetes
+        </h4>
+        
+        <div class="space-y-4">
+          <div>
+            <h5 class="font-medium text-red-700 mb-2">📚 Panduan Pengelolaan Diabetes:</h5>
+            <ul class="space-y-1 text-sm">
+              <li><a href="https://www.alodokter.com/diabetes" target="_blank" class="text-blue-600 hover:text-blue-800 underline">Panduan Lengkap Diabetes - Alodokter</a></li>
+              <li><a href="https://www.halodoc.com/kesehatan/diabetes" target="_blank" class="text-blue-600 hover:text-blue-800 underline">Informasi Diabetes Lengkap - Halodoc</a></li>
+            </ul>
+          </div>
+          
+          <div>
+            <h5 class="font-medium text-red-700 mb-2">⚠️ Bahaya dan Komplikasi Diabetes:</h5>
+            <ul class="space-y-1 text-sm">
+              <li><a href="https://hellosehat.com/diabetes/komplikasi-diabetes/" target="_blank" class="text-blue-600 hover:text-blue-800 underline">Bahaya Komplikasi Diabetes - Hello Sehat</a></li>
+            </ul>
+          </div>
+          
+          <div>
+            <h5 class="font-medium text-red-700 mb-2">🔍 Penyebab dan Faktor Risiko Diabetes:</h5>
+            <ul class="space-y-1 text-sm">
+              <li><a href="https://hellosehat.com/diabetes/diabetes-tipe-1/penyebab-diabetes/" target="_blank" class="text-blue-600 hover:text-blue-800 underline">Penyebab dan Faktor Risiko Diabetes - Hello Sehat</a></li>
+            </ul>
+          </div>
+          
+          <div>
+            <h5 class="font-medium text-red-700 mb-2">👁️ Retinopati Diabetik:</h5>
+            <ul class="space-y-1 text-sm">
+              <li><a href="https://www.alodokter.com/retinopati-diabetik" target="_blank" class="text-blue-600 hover:text-blue-800 underline">Retinopati Diabetik - Alodokter</a></li>
+              <li><a href="https://hellosehat.com/diabetes/komplikasi-diabetes/retinopati-diabetik/" target="_blank" class="text-blue-600 hover:text-blue-800 underline">Retinopati Diabetik: Gejala dan Pengobatan - Hello Sehat</a></li>
+            </ul>
+          </div>
+          
+          <div class="mt-4 p-3 bg-yellow-100 border border-yellow-300 rounded">
+            <p class="text-sm text-yellow-800 font-medium">
+              💡 <strong>Penting:</strong> Informasi di atas hanya sebagai referensi. Selalu konsultasikan dengan dokter spesialis mata dan dokter spesialis penyakit dalam untuk diagnosis dan pengobatan yang tepat.
+            </p>
+          </div>
+        </div>
+      </div>
+    `
+        : `
+         <div class="mt-6 bg-green-50 rounded-lg p-6 border border-green-200">
+      <h4 class="text-lg font-semibold text-green-800 mb-4 flex items-center">
+        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" clip-rule="evenodd"></path>
+        </svg>
+        Jaga Kesehatan Mata & Cegah Diabetes
+      </h4>
+      
+      <div class="space-y-4">
+        <div>
+          <h5 class="font-medium text-green-700 mb-2">🥗 Pola Makan Sehat untuk Mencegah Diabetes:</h5>
+          <ul class="space-y-1 text-sm">
+            <li><a href="https://www.siloamhospitals.com/informasi-siloam/artikel/makanan-penyebab-diabetes" target="_blank" class="text-blue-600 hover:text-blue-800 underline">Makanan Penyebab Diabetes - Siloam Hospitals</a></li>
+            <li><a href="https://www.klikdokter.com/info-sehat/diabetes/gaya-hidup-ini-bisa-tingkatkan-risiko-diabetes" target="_blank" class="text-blue-600 hover:text-blue-800 underline">Gaya Hidup Ini Bisa Tingkatkan Risiko Diabetes</a></li>
+          </ul>
+        </div>
+        
+        <div class="mt-4 p-3 bg-blue-100 border border-blue-300 rounded">
+          <p class="text-sm text-blue-800 font-medium">
+            ✨ <strong>Tetap Waspada:</strong> Meskipun hasil menunjukkan tidak ada tanda retinopati diabetik, penting untuk tetap menjaga gaya hidup sehat dan melakukan pemeriksaan mata rutin setiap 1-2 tahun untuk deteksi dini.
+          </p>
+        </div>
+      </div>
+    </div>
+        `;
+
     this.#elements.resultContainer.innerHTML = `
       <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
         <h2 class="text-2xl font-bold text-gray-800">Assessment Results</h2>
@@ -258,6 +337,8 @@ export default class DiabetesFormPageUser {
             </div>
           </div>
         </div>
+        
+        ${diabetesResourcesSection}
       </div>
     `;
 
